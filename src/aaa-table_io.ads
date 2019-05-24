@@ -7,9 +7,16 @@ package AAA.Table_IO with Preelaborate is
 
    type Table is tagged private;
 
+   type Reference (Table : access Table_IO.Table) Is limited null Record
+     with Implicit_Dereference => Table;
+
    procedure Append (T : in out Table; Cell : String);
 
+   function Append (T : in out Table; Cell : String) return Reference;
+
+
    procedure New_Row (T : in out Table);
+
 
    type Alignments is array (Positive range <>) of Ada.Strings.Alignment;
 

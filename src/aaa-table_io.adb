@@ -28,6 +28,16 @@ package body AAA.Table_IO is
       T.Next_Column := T.Next_Column + 1;
    end Append;
 
+   ------------
+   -- Append --
+   ------------
+
+   function Append (T : in out Table; Cell : String) return Reference is
+   begin
+      T.Append (Cell);
+      return Reference'(Table => T'Access);
+   end Append;
+
    -------------
    -- New_Row --
    -------------
