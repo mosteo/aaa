@@ -1,3 +1,3 @@
-package AAA with Preelaborate is
+package AAA with Pure is
 
 end AAA;

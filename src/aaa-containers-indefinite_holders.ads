@@ -2,7 +2,7 @@ with Ada.Finalization;
 
 generic
    type Held (<>) is private;
-package AAA.Containers.Indefinite_Holders is
+package AAA.Containers.Indefinite_Holders with Preelaborate is
 
    --  Simple holder to work around GNAT holders bug
 
