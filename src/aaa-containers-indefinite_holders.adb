@@ -34,6 +34,12 @@ package body AAA.Containers.Indefinite_Holders is
       end if;
    end Adjust;
 
+   -------------
+   -- Element --
+   -------------
+
+   function Element (This : Holder) return Held is (This.Item.all);
+
    --------------
    -- Finalize --
    --------------

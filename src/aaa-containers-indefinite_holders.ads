@@ -14,6 +14,8 @@ package AAA.Containers.Indefinite_Holders with Preelaborate is
 
    function Is_Valid (This : Holder) return Boolean is (not This.Is_Empty);
 
+   function Element (This : Holder) return Held;
+
    type Reference_Value (Element : access Held) is limited null record with
      Implicit_Dereference => Element;
 
