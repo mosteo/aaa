@@ -8,18 +8,21 @@ package AAA.Containers.Indefinite_Holders with Preelaborate is
 
    type Holder is tagged private;
 
-   function To_Holder (Elem : Held) return Holder;
+   function To_Holder (Elem : Held) return Holder with
+     Post => To_Holder'Result.Is_Valid;
 
    function Is_Empty (This : Holder) return Boolean;
 
    function Is_Valid (This : Holder) return Boolean is (not This.Is_Empty);
 
-   function Element (This : Holder) return Held;
+   function Element (This : Holder) return Held with
+     Pre => This.Is_Valid;
 
    type Reference_Value (Element : access Held) is limited null record with
      Implicit_Dereference => Element;
 
-   function Reference (This : in out Holder) return Reference_Value;
+   function Reference (This : in out Holder) return Reference_Value with
+     Pre => This.Is_Valid;
 
 private
 
