@@ -2,6 +2,15 @@ with Ada.Unchecked_Deallocation;
 
 package body AAA.Containers.Indefinite_Holders is
 
+   ----------
+   -- Hold --
+   ----------
+
+   procedure Hold (This : in out Holder; Elem : Held) is
+   begin
+      This := To_Holder (Elem);
+   end Hold;
+
    ---------------
    -- To_Holder --
    ---------------

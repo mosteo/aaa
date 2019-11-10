@@ -8,6 +8,8 @@ package AAA.Containers.Indefinite_Holders with Preelaborate is
 
    type Holder is tagged private;
 
+   procedure Hold (This : in out Holder; Elem : Held);
+
    function To_Holder (Elem : Held) return Holder with
      Post => To_Holder'Result.Is_Valid;
 
