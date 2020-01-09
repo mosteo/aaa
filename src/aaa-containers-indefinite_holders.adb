@@ -2,6 +2,15 @@ with Ada.Unchecked_Deallocation;
 
 package body AAA.Containers.Indefinite_Holders is
 
+   -----------
+   -- Clear --
+   -----------
+
+   procedure Clear (This : in out Holder) is
+   begin
+      This.Finalize;
+   end Clear;
+
    ----------
    -- Hold --
    ----------
