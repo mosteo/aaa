@@ -68,4 +68,11 @@ package body AAA.Containers.Indefinite_Holders is
       Free (This.Item);
    end Finalize;
 
+   -------------------------
+   -- Unchecked_Reference --
+   -------------------------
+
+   function Unchecked_Reference (This : Holder) return access Held is
+     (This.Item);
+
 end AAA.Containers.Indefinite_Holders;
