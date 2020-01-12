@@ -12,7 +12,8 @@ project AAA is
    end Builder;
 
    package Compiler is
-      for Switches ("ada") use ("-gnatVa", "-gnatwa", "-g", "-O2", "-gnata", "-gnato", "-fstack-check");
+      for Switches ("ada") use ("-gnatVa", "-gnatwae", "-g", "-O2",
+                                "-gnata", "-gnato", "-fstack-check");
    end Compiler;
 
    package Binder is
