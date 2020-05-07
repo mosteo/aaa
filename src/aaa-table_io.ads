@@ -22,7 +22,9 @@ package AAA.Table_IO with Preelaborate is
 
    procedure Print (T         : Table;
                     Separator : String := " ";
-                    Align     : Alignments := (1 .. 0 => <>));
+                    Align     : Alignments := (1 .. 0 => <>);
+                    Put_Line  : access procedure (Line : String) := null);
+   --  Will print the table using GNAT.IO, unless Put_Line is supplied
 
 private
 

@@ -1,5 +1,6 @@
 with Ada.Containers;
 with Ada.Strings.Fixed;
+with Ada.Strings.Unbounded;
 
 with GNAT.IO;
 
@@ -52,10 +53,10 @@ package body AAA.Table_IO is
    -- Put_Padded --
    ----------------
 
-   procedure Put_Padded (T     : Table;
-                         Col   : Positive;
-                         Text  : String;
-                         Align : Ada.Strings.Alignment)
+   function Prepare_Padded (T     : Table;
+                            Col   : Positive;
+                            Text  : String;
+                            Align : Ada.Strings.Alignment) return String
    is
       Field : String (1 .. T.Max_Widths (Col));
    begin
@@ -63,34 +64,45 @@ package body AAA.Table_IO is
                               Field,
                               Drop    => Ada.Strings.Error,
                               Justify => Align);
-      GNAT.IO.Put (Field);
-   end Put_Padded;
+      return Field;
+   end Prepare_Padded;
 
    -----------
    -- Print --
    -----------
 
-   procedure Print  (T         : Table;
+   procedure Print (T         : Table;
                     Separator : String := " ";
-                     Align     : Alignments := (1 .. 0 => <>))
+                    Align     : Alignments := (1 .. 0 => <>);
+                    Put_Line  : access procedure (Line : String) := null)
    is
-      use GNAT.IO;
+      use Ada.Strings.Unbounded;
    begin
       for Row of T.Rows loop
-         for I in 1 .. Natural (Row.Length) loop
-            Put_Padded (T,
-                        I,
-                        Row (I),
-                        (if Align'Length >= I
-                         then Align (I)
-                         else Ada.Strings.Left));
+         declare
+            Line : Unbounded_String;
+         begin
+            for I in 1 .. Natural (Row.Length) loop
+               Append (Line,
+                       Prepare_Padded
+                         (T,
+                          I,
+                          Row (I),
+                          (if Align'Length >= I
+                           then Align (I)
+                           else Ada.Strings.Left)));
 
-            if I < Natural (Row.Length) then
-               Put (Separator);
-            else
-               New_Line;
-            end if;
-         end loop;
+               if I < Natural (Row.Length) then
+                  Append (Line, Separator);
+               else
+                  if Put_Line /= null then
+                     Put_Line (To_String (Line));
+                  else
+                     GNAT.IO.Put_Line (To_String (Line));
+                  end if;
+               end if;
+            end loop;
+         end;
       end loop;
    end Print;
 
