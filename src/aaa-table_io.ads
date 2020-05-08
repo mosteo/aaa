@@ -5,9 +5,14 @@ with Ada.Strings;
 
 package AAA.Table_IO with Preelaborate is
 
+   --  A type to format tables according to the max length of fields. The table
+   --  is ANSI-aware, so it will work properly for text with embedded ANSI
+   --  control sequences. However, non-left-aligned text may not align
+   --  properly.
+
    type Table is tagged private;
 
-   type Reference (Table : access Table_IO.Table) Is limited null Record
+   type Reference (Table : access Table_IO.Table) is limited null record
      with Implicit_Dereference => Table;
 
    procedure Append (T : in out Table; Cell : String);

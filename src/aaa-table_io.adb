@@ -8,6 +8,40 @@ package body AAA.Table_IO is
 
    use all type Ada.Containers.Count_Type;
 
+   ----------------
+   -- ANSI_Extra --
+   ----------------
+
+   function ANSI_Extra (Text : String) return Natural is
+      Counting : Boolean := False;
+      Extra    : Natural := 0;
+   begin
+      for Char of Text loop
+         if Counting then
+            Extra := Extra + 1;
+            if Char = 'm' then
+               Counting := False;
+            end if;
+         else
+            if Char = ASCII.ESC then
+               Counting := True;
+               Extra := Extra + 1;
+            end if;
+         end if;
+      end loop;
+
+      return Extra;
+   end ANSI_Extra;
+
+   -----------------
+   -- ANSI_Length --
+   -----------------
+
+   function ANSI_Length (Text : String) return Natural is
+   begin
+      return Text'Length - ANSI_Extra (Text);
+   end ANSI_Length;
+
    ------------
    -- Append --
    ------------
@@ -19,10 +53,10 @@ package body AAA.Table_IO is
       end if;
 
       if Natural (T.Max_Widths.Length) < T.Next_Column then
-         T.Max_Widths.Append (Cell'Length);
+         T.Max_Widths.Append (ANSI_Length (Cell));
       else
          T.Max_Widths (T.Next_Column) :=
-           Natural'Max (Cell'Length, T.Max_Widths (T.Next_Column));
+           Natural'Max (ANSI_Length (Cell), T.Max_Widths (T.Next_Column));
       end if;
 
       T.Rows (Natural (T.Rows.Length)).Append (Cell);
@@ -58,7 +92,7 @@ package body AAA.Table_IO is
                             Text  : String;
                             Align : Ada.Strings.Alignment) return String
    is
-      Field : String (1 .. T.Max_Widths (Col));
+      Field : String (1 .. T.Max_Widths (Col) + ANSI_Extra (Text));
    begin
       Ada.Strings.Fixed.Move (Text,
                               Field,
