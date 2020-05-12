@@ -1,10 +1,15 @@
+with Ada.Characters.Wide_Wide_Latin_1;
 with Ada.Containers;
-with Ada.Strings.Fixed;
-with Ada.Strings.Unbounded;
+with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
+with Ada.Strings.Wide_Wide_Fixed;
+with Ada.Strings.Wide_Wide_Unbounded;
 
 with GNAT.IO;
 
 package body AAA.Table_IO is
+
+   package Chars renames Ada.Characters.Wide_Wide_Latin_1;
+   package UTF   renames Ada.Strings.UTF_Encoding;
 
    use all type Ada.Containers.Count_Type;
 
@@ -12,7 +17,7 @@ package body AAA.Table_IO is
    -- ANSI_Extra --
    ----------------
 
-   function ANSI_Extra (Text : String) return Natural is
+   function ANSI_Extra (Text : Wide_Wide_String) return Natural is
       Counting : Boolean := False;
       Extra    : Natural := 0;
    begin
@@ -23,7 +28,7 @@ package body AAA.Table_IO is
                Counting := False;
             end if;
          else
-            if Char = ASCII.ESC then
+            if Char = Chars.ESC then
                Counting := True;
                Extra := Extra + 1;
             end if;
@@ -37,7 +42,7 @@ package body AAA.Table_IO is
    -- ANSI_Length --
    -----------------
 
-   function ANSI_Length (Text : String) return Natural is
+   function ANSI_Length (Text : Wide_Wide_String) return Natural is
    begin
       return Text'Length - ANSI_Extra (Text);
    end ANSI_Length;
@@ -48,19 +53,24 @@ package body AAA.Table_IO is
 
    procedure Append (T : in out Table; Cell : String) is
    begin
-      if T.Rows.Is_Empty then
-         T.New_Row;
-      end if;
+      declare
+         Cell : constant Wide_Wide_String :=
+                  UTF.Wide_Wide_Strings.Decode (Append.Cell);
+      begin
+         if T.Rows.Is_Empty then
+            T.New_Row;
+         end if;
 
-      if Natural (T.Max_Widths.Length) < T.Next_Column then
-         T.Max_Widths.Append (ANSI_Length (Cell));
-      else
-         T.Max_Widths (T.Next_Column) :=
-           Natural'Max (ANSI_Length (Cell), T.Max_Widths (T.Next_Column));
-      end if;
+         if Natural (T.Max_Widths.Length) < T.Next_Column then
+            T.Max_Widths.Append (ANSI_Length (Cell));
+         else
+            T.Max_Widths (T.Next_Column) :=
+              Natural'Max (ANSI_Length (Cell), T.Max_Widths (T.Next_Column));
+         end if;
 
-      T.Rows (Natural (T.Rows.Length)).Append (Cell);
-      T.Next_Column := T.Next_Column + 1;
+         T.Rows (Natural (T.Rows.Length)).Append (Cell);
+         T.Next_Column := T.Next_Column + 1;
+      end;
    end Append;
 
    ------------
@@ -89,15 +99,16 @@ package body AAA.Table_IO is
 
    function Prepare_Padded (T     : Table;
                             Col   : Positive;
-                            Text  : String;
-                            Align : Ada.Strings.Alignment) return String
+                            Text  : Wide_Wide_String;
+                            Align : Ada.Strings.Alignment)
+                            return Wide_Wide_String
    is
-      Field : String (1 .. T.Max_Widths (Col) + ANSI_Extra (Text));
+      Field : Wide_Wide_String (1 .. T.Max_Widths (Col) + ANSI_Extra (Text));
    begin
-      Ada.Strings.Fixed.Move (Text,
-                              Field,
-                              Drop    => Ada.Strings.Error,
-                              Justify => Align);
+      Ada.Strings.Wide_Wide_Fixed.Move (Text,
+                                        Field,
+                                        Drop    => Ada.Strings.Error,
+                                        Justify => Align);
       return Field;
    end Prepare_Padded;
 
@@ -110,11 +121,13 @@ package body AAA.Table_IO is
                     Align     : Alignments := (1 .. 0 => <>);
                     Put_Line  : access procedure (Line : String) := null)
    is
-      use Ada.Strings.Unbounded;
+      use Ada.Strings.Wide_Wide_Unbounded;
+      Wide_Separator : constant Wide_Wide_String :=
+                         UTF.Wide_Wide_Strings.Decode (Separator);
    begin
       for Row of T.Rows loop
          declare
-            Line : Unbounded_String;
+            Line : Unbounded_Wide_Wide_String;
          begin
             for I in 1 .. Natural (Row.Length) loop
                Append (Line,
@@ -127,13 +140,19 @@ package body AAA.Table_IO is
                            else Ada.Strings.Left)));
 
                if I < Natural (Row.Length) then
-                  Append (Line, Separator);
+                  Append (Line, Wide_Separator);
                else
-                  if Put_Line /= null then
-                     Put_Line (To_String (Line));
-                  else
-                     GNAT.IO.Put_Line (To_String (Line));
-                  end if;
+                  declare
+                     UTF8_Line : constant String :=
+                                   UTF.Wide_Wide_Strings.Encode
+                                     (To_Wide_Wide_String (Line));
+                  begin
+                     if Put_Line /= null then
+                        Put_Line (UTF8_Line);
+                     else
+                        GNAT.IO.Put_Line (UTF8_Line);
+                     end if;
+                  end;
                end if;
             end loop;
          end;

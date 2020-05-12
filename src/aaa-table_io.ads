@@ -10,6 +10,10 @@ package AAA.Table_IO with Preelaborate is
    --  control sequences. However, non-left-aligned text may not align
    --  properly.
 
+   --  Text supplied to these tables is supposed to be ASCII or UTF-8; other
+   --  encodings will either cause errors or break alignment. If any input
+   --  requires UTF encoding, output will be conversely encoded.
+
    type Table is tagged private;
 
    type Reference (Table : access Table_IO.Table) is limited null record
@@ -35,8 +39,9 @@ private
 
    package Natural_Vectors is new Ada.Containers.Vectors (Positive, Natural);
 
-   package String_Vectors is new Ada.Containers.Indefinite_Vectors (Positive,
-                                                                    String);
+   package String_Vectors is new Ada.Containers.Indefinite_Vectors
+     (Positive,
+      Wide_Wide_String);
    subtype Row is String_Vectors.Vector;
    use all type Row;
 
