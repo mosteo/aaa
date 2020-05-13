@@ -11,6 +11,13 @@ package body AAA.Containers.Indefinite_Holders is
       This.Finalize;
    end Clear;
 
+   ---------
+   -- Get --
+   ---------
+
+   function Get (This : Holder) return Const_Ref_Value
+   is (Element => This.Item);
+
    ----------
    -- Hold --
    ----------

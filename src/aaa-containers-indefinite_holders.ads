@@ -28,7 +28,16 @@ package AAA.Containers.Indefinite_Holders with Preelaborate is
    function Reference (This : in out Holder) return Reference_Value with
      Pre => This.Is_Valid;
 
+   function Ref (This : in out Holder) return Reference_Value
+                 renames Reference;
+
    function Unchecked_Reference (This : Holder) return access Held with
+     Pre => This.Is_Valid;
+
+   type Const_Ref_Value (Element : access constant Held) is limited null record
+     with Implicit_Dereference => Element;
+
+   function Get (This : Holder) return Const_Ref_Value with
      Pre => This.Is_Valid;
 
 private
