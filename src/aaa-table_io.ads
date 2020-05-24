@@ -21,7 +21,7 @@ package AAA.Table_IO with Preelaborate is
 
    procedure Append (T : in out Table; Cell : String);
 
-   function Append (T : in out Table; Cell : String) return Reference;
+   function Append (T : aliased in out Table; Cell : String) return Reference;
 
 
    procedure New_Row (T : in out Table);
