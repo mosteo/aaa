@@ -3,6 +3,7 @@
 *.o
 *-loc.xml
 
+alire
 bin
 lib
 obj
