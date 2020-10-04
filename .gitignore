@@ -3,7 +3,8 @@
 *.o
 *-loc.xml
 
-alire
+alire/
+alire.lock
 bin
 lib
 obj
