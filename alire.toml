@@ -18,3 +18,4 @@ licenses = ["LGPL 3.0"]
 maintainers = ["alejandro@mosteo.com"]
 maintainers-logins = ["mosteo"]
 tags = ["miscellanea", "utility"]
+website = "https://github.com/mosteo/aaa"
