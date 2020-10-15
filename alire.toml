@@ -1,5 +1,7 @@
-authors = ["Alejandro R. Mosteo"]
+name = "aaa"
+version = "0.2.1"
 description = "Alex's Ada Assortment (of miscellaneous utilities)"
+
 long-description = """
 Alex's Ada Assortment of Utilities
 
@@ -7,10 +9,12 @@ Alex's Ada Assortment of Utilities
 - Indefinite containers.
 - Enumeration validity/conversions of string images.
 - On-demand stack backtraces.
+- String vectors.
+- Simple subprocess spawning.
 """
+
+authors = ["Alejandro R. Mosteo"]
 licenses = ["LGPL 3.0"]
 maintainers = ["alejandro@mosteo.com"]
 maintainers-logins = ["mosteo"]
-name = "aaa"
-version = "0.2.1"
 tags = ["miscellanea", "utility"]
