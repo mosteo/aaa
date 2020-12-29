@@ -1,5 +1,5 @@
 name = "aaa"
-version = "0.2.2"
+version = "0.2.3"
 description = "Alex's Ada Assortment (of miscellaneous utilities)"
 
 long-description = """
@@ -11,6 +11,7 @@ Alex's Ada Assortment of Utilities
 - On-demand stack backtraces.
 - String vectors.
 - Simple subprocess spawning.
+- Write-through minimal cache for objects stored in files
 """
 
 authors = ["Alejandro R. Mosteo"]
