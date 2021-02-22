@@ -14,8 +14,7 @@ package AAA.Caches.Files is
 
    function Element (This     : in out Cache;
                      Filename : String)
-                     return Cached with
-     Pre => This.Has_Element;
+                     return Cached;
 
    overriding
    function Has_Element (This : Cache) return Boolean;
