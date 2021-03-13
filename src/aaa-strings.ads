@@ -6,7 +6,13 @@ package AAA.Strings with Preelaborate is
    function Head (S : String; Separator : Character) return String;
    --  if S contains Separator, the lhs is returned. Otherwise Str is returned.
 
+   function Head (S : String; Separator : String) return String;
+   --  if S contains Separator, the lhs is returned. Otherwise Str is returned.
+
    function Tail (S : String; Separator : Character) return String;
+   --  If S contains Separator, the rhs is returned. Otherwise "".
+
+   function Tail (S : String; Separator : String) return String;
    --  If S contains Separator, the rhs is returned. Otherwise "".
 
    function Trim (S : String; Target : Character := ' ') return String;

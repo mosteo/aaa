@@ -105,6 +105,23 @@ package body AAA.Strings is
       return S;
    end Head;
 
+   ----------
+   -- Head --
+   ----------
+
+   function Head (S : String; Separator : String) return String is
+   begin
+      for I in S'Range loop
+         if I + Separator'Length - 1 in S'Range and then
+           S (I .. I + Separator'Length - 1) = Separator
+         then
+            return S (S'First .. I - 1);
+         end if;
+      end loop;
+
+      return S;
+   end Head;
+
    ------------
    -- Indent --
    ------------
@@ -177,6 +194,23 @@ package body AAA.Strings is
       for I in S'Range loop
          if S (I) = Separator then
             return S (I + 1 .. S'Last);
+         end if;
+      end loop;
+
+      return "";
+   end Tail;
+
+   ----------
+   -- Tail --
+   ----------
+
+   function Tail (S : String; Separator : String) return String is
+   begin
+      for I in S'Range loop
+         if I + Separator'Length - 1 in S'Range and then
+           S (I .. I + Separator'Length - 1) = Separator
+         then
+            return S (I + Separator'Length .. S'Last);
          end if;
       end loop;
 
