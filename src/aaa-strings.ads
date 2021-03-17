@@ -3,6 +3,8 @@ with Ada.Containers.Indefinite_Vectors;
 
 package AAA.Strings with Preelaborate is
 
+   function Contains (Full : String; Sub : String) return Boolean;
+
    function Head (S : String; Separator : Character) return String;
    --  if S contains Separator, the lhs is returned. Otherwise Str is returned.
 
@@ -110,6 +112,11 @@ package AAA.Strings with Preelaborate is
    --  Dump contents to a given file
 
 private
+
+   function Contains (Full : String; Sub : String) return Boolean
+   is (for some I in Full'Range =>
+          I + Sub'Length - 1 in Full'Range and then
+          Full (I .. I + Sub'Length - 1) = Sub);
 
    Empty_Map    : constant Map    := (Maps.Empty_Map with null record);
    Empty_Vector : constant Vector := (Vectors.Empty_Vector with null record);
