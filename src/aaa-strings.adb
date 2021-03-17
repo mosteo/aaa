@@ -2,6 +2,8 @@ with Ada.Streams.Stream_IO;
 with Ada.Strings.Fixed;
 with Ada.Strings.Maps;
 
+with GNAT.Case_Util;
+
 package body AAA.Strings is
 
    ------------
@@ -45,6 +47,24 @@ package body AAA.Strings is
          end return;
       end if;
    end Append_To_Last_Line;
+
+   --------------------
+   -- Camel_To_Mixed --
+   --------------------
+
+   function Camel_To_Mixed (S : String) return String is
+   begin
+      for I in S'First + 1 .. S'Last loop
+         if Ada.Characters.Handling.Is_Upper (S (I)) then
+            return
+              S (S'First .. I - 1)
+              & "_"
+              & Camel_To_Mixed (S (I .. S'Last));
+         end if;
+      end loop;
+
+      return S;
+   end Camel_To_Mixed;
 
    -----------
    -- Count --
@@ -144,6 +164,15 @@ package body AAA.Strings is
    function New_Line (V : Vector) return Vector
    is (V.Append (""));
 
+   --------------
+   -- New_Line --
+   --------------
+
+   procedure New_Line (V : in out Vector) is
+   begin
+      V.Append ("");
+   end New_Line;
+
    -------------
    -- Replace --
    -------------
@@ -235,6 +264,17 @@ package body AAA.Strings is
          Result.Delete_First;
       end return;
    end Tail;
+
+   -------------------
+   -- To_Mixed_Case --
+   -------------------
+
+   function To_Mixed_Case (S : String) return String is
+   begin
+      return R : String := S do
+         GNAT.Case_Util.To_Mixed (R);
+      end return;
+   end To_Mixed_Case;
 
    ---------------
    -- To_Vector --

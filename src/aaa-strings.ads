@@ -1,7 +1,12 @@
+with Ada.Characters.Handling;
+
 with Ada.Containers.Indefinite_Ordered_Maps;
 with Ada.Containers.Indefinite_Vectors;
 
 package AAA.Strings with Preelaborate is
+
+   function Camel_To_Mixed (S : String) return String;
+   --  Converts ThisThing into This_Thing
 
    function Contains (Full : String; Sub : String) return Boolean;
 
@@ -16,6 +21,11 @@ package AAA.Strings with Preelaborate is
 
    function Tail (S : String; Separator : String) return String;
    --  If S contains Separator, the rhs is returned. Otherwise "".
+
+   function To_Lower_Case (S : String) return String
+                           renames Ada.Characters.Handling.To_Lower;
+
+   function To_Mixed_Case (S : String) return String;
 
    function Trim (S : String; Target : Character := ' ') return String;
    --  Remove Target at S extremes
@@ -88,7 +98,10 @@ package AAA.Strings with Preelaborate is
                     return   Vector;
 
    function New_Line (V : Vector) return Vector;
-   --  Append an empty line to V
+   --  Append an empty line to V and return it in a new vector
+
+   procedure New_Line (V : in out Vector);
+   --  Append new line to V
 
    function Split (S : String; Separator : Character) return Vector;
    --  Split a string in substrings at Separator positions. A Separator at
