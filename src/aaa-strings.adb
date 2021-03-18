@@ -187,6 +187,17 @@ package body AAA.Strings is
    end New_Line;
 
    -------------
+   -- Prepend --
+   -------------
+
+   procedure Prepend (V : in out Vector; S : Set'Class) is
+   begin
+      for Str of reverse S loop
+         V.Prepend (Str);
+      end loop;
+   end Prepend;
+
+   -------------
    -- Replace --
    -------------
 

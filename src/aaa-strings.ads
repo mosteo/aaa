@@ -1,6 +1,7 @@
 with Ada.Characters.Handling;
 
 with Ada.Containers.Indefinite_Ordered_Maps;
+with Ada.Containers.Indefinite_Ordered_Sets;
 with Ada.Containers.Indefinite_Vectors;
 
 package AAA.Strings with Preelaborate is
@@ -45,6 +46,16 @@ package AAA.Strings with Preelaborate is
    type Map is new Maps.Map with null record;
 
    Empty_Map : constant Map;
+
+   ----------
+   -- Sets --
+   ----------
+
+   package Sets is new Ada.Containers.Indefinite_Ordered_Sets (String);
+
+   type Set is new Sets.Set with null record;
+
+   Empty_Set : constant Set;
 
    -------------
    -- Vectors --
@@ -108,6 +119,8 @@ package AAA.Strings with Preelaborate is
    procedure New_Line (V : in out Vector);
    --  Append new line to V
 
+   procedure Prepend (V : in out Vector; S : Set'Class);
+
    function Split (S : String; Separator : Character) return Vector;
    --  Split a string in substrings at Separator positions. A Separator at
    --  S'First or S'Last will result in an empty string also being included.
@@ -137,6 +150,7 @@ private
           Full (I .. I + Sub'Length - 1) = Sub);
 
    Empty_Map    : constant Map    := (Maps.Empty_Map with null record);
+   Empty_Set    : constant Set    := (Sets.Empty_Set with null record);
    Empty_Vector : constant Vector := (Vectors.Empty_Vector with null record);
 
 end AAA.Strings;
