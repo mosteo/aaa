@@ -63,6 +63,9 @@ package AAA.Strings with Preelaborate is
                     S : String) return Vector;
    --  Returns a copy of V with S appended at the end
 
+   function "&" (V : Vector;
+                 S : String) return Vector renames Append;
+
    function Append (L, R : Vector) return Vector;
    --  Append R at the end of L.
 
@@ -73,6 +76,8 @@ package AAA.Strings with Preelaborate is
 
    procedure Append_Vector (V : in out Vector; V2 : Vector)
                             renames Append;
+
+   procedure Append_To_Last_Line (V : in out Vector; S : String);
 
    function Append_To_Last_Line (V : Vector;
                                  S : String)

@@ -33,19 +33,32 @@ package body AAA.Strings is
    -- Append_To_Last_Line --
    -------------------------
 
+   procedure Append_To_Last_Line (V : in out Vector; S : String) is
+   begin
+      if V.Is_Empty then
+         V.Append (S);
+      else
+         declare
+            Last : constant String := V.Last_Element;
+         begin
+            V.Delete_Last;
+            V.Append_Line (Last & S);
+         end;
+      end if;
+   end Append_To_Last_Line;
+
+   -------------------------
+   -- Append_To_Last_Line --
+   -------------------------
+
    function Append_To_Last_Line (V : Vector;
                                  S : String)
                                  return Vector
    is
    begin
-      if V.Is_Empty then
-         return To_Vector (S);
-      else
-         return R : Vector := V do
-            R.Delete_Last;
-            R.Append_Line (V.Last_Element & S);
-         end return;
-      end if;
+      return R : Vector := V do
+         R.Append_To_Last_Line (S);
+      end return;
    end Append_To_Last_Line;
 
    --------------------
