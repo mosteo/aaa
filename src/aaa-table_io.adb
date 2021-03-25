@@ -1,4 +1,5 @@
-with Ada.Characters.Wide_Wide_Latin_1;
+with AAA.ANSI;
+
 with Ada.Containers;
 with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
 with Ada.Strings.Wide_Wide_Fixed;
@@ -8,44 +9,9 @@ with GNAT.IO;
 
 package body AAA.Table_IO is
 
-   package Chars renames Ada.Characters.Wide_Wide_Latin_1;
    package UTF   renames Ada.Strings.UTF_Encoding;
 
    use all type Ada.Containers.Count_Type;
-
-   ----------------
-   -- ANSI_Extra --
-   ----------------
-
-   function ANSI_Extra (Text : Wide_Wide_String) return Natural is
-      Counting : Boolean := False;
-      Extra    : Natural := 0;
-   begin
-      for Char of Text loop
-         if Counting then
-            Extra := Extra + 1;
-            if Char = 'm' then
-               Counting := False;
-            end if;
-         else
-            if Char = Chars.ESC then
-               Counting := True;
-               Extra := Extra + 1;
-            end if;
-         end if;
-      end loop;
-
-      return Extra;
-   end ANSI_Extra;
-
-   -----------------
-   -- ANSI_Length --
-   -----------------
-
-   function ANSI_Length (Text : Wide_Wide_String) return Natural is
-   begin
-      return Text'Length - ANSI_Extra (Text);
-   end ANSI_Length;
 
    ------------
    -- Append --
@@ -62,10 +28,10 @@ package body AAA.Table_IO is
          end if;
 
          if Natural (T.Max_Widths.Length) < T.Next_Column then
-            T.Max_Widths.Append (ANSI_Length (Cell));
+            T.Max_Widths.Append (ANSI.Length (Cell));
          else
             T.Max_Widths (T.Next_Column) :=
-              Natural'Max (ANSI_Length (Cell), T.Max_Widths (T.Next_Column));
+              Natural'Max (ANSI.Length (Cell), T.Max_Widths (T.Next_Column));
          end if;
 
          T.Rows (Natural (T.Rows.Length)).Append (Cell);
@@ -103,7 +69,8 @@ package body AAA.Table_IO is
                             Align : Ada.Strings.Alignment)
                             return Wide_Wide_String
    is
-      Field : Wide_Wide_String (1 .. T.Max_Widths (Col) + ANSI_Extra (Text));
+      Field : Wide_Wide_String (1 ..
+                                T.Max_Widths (Col) + ANSI.Count_Extra (Text));
    begin
       Ada.Strings.Wide_Wide_Fixed.Move (Text,
                                         Field,
