@@ -23,9 +23,7 @@ package AAA.Table_IO with Preelaborate is
 
    function Append (T : aliased in out Table; Cell : String) return Reference;
 
-
    procedure New_Row (T : in out Table);
-
 
    type Alignments is array (Positive range <>) of Ada.Strings.Alignment;
 

@@ -19,7 +19,8 @@ package AAA.Processes is
      Pre =>
        Input = "" or else
        GNAT.OS_Lib.Directory_Separator /= '\' or else
-       raise Unimplemented with "Spawning with user input is unuspported on Windows";
+       raise Unimplemented with
+         "Spawning with user input is unuspported on Windows";
    --  Run a command, giving optional Input to it, and capture its output,
    --  optionally including stderr output. If the child's process exit code is
    --  /= 0, Child_Error will be raised when Raise_On_Error. CR & LF sequences

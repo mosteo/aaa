@@ -20,7 +20,7 @@ package AAA.Text_IO is
                             Line_Prefix : String := "";
                             Filling     : Filling_Modes := Greedy;
                             File        : Ada.Text_IO.File_Access :=
-                              Ada.Text_Io.Standard_Output);
+                              Ada.Text_IO.Standard_Output);
    --  Reformat Text and write it to the given File.
    --  Lines will be broken at either spaces or '-'.
    --  If Line_Width is too short for a word or syllable, the word will be

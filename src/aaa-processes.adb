@@ -163,7 +163,7 @@ package body AAA.Processes is
                     Err_To_Out   => Err_To_Out),
                  Match => ASCII.CR & ASCII.LF,
                  Subst => (1 => ASCII.LF)),
-              Separator => ASCII.Lf);
+              Separator => ASCII.LF);
 
          if R.Exit_Code /= 0 and then Raise_On_Error then
             raise Child_Error with

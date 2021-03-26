@@ -74,9 +74,6 @@ package AAA.Strings with Preelaborate is
                     S : String) return Vector;
    --  Returns a copy of V with S appended at the end
 
-   function "&" (V : Vector;
-                 S : String) return Vector renames Append;
-
    function Append (L, R : Vector) return Vector;
    --  Append R at the end of L.
 

@@ -13,7 +13,7 @@ package body AAA.Text_IO is
                             Line_Prefix : String := "";
                             Filling     : Filling_Modes := Greedy;
                             File        : Ada.Text_IO.File_Access :=
-                              Ada.Text_Io.Standard_Output)
+                              Ada.Text_IO.Standard_Output)
    is
       pragma Unreferenced (Filling);
       use Ada.Text_IO;
@@ -56,7 +56,8 @@ package body AAA.Text_IO is
          function Used return Natural
          is (ANSI.Length (To_String (Line)));
 
-         PPos : constant Integer := Pos; -- Initial Pos, to check we had some progress
+         PPos : constant Integer := Pos;
+         --  Initial Pos, to check we had some progress
 
          ---------
          -- Put --
