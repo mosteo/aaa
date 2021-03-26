@@ -1,5 +1,5 @@
 name = "aaa"
-version = "0.2.3"
+version = "0.2.3-dev"
 description = "Alex's Ada Assortment (of miscellaneous utilities)"
 
 long-description = """
