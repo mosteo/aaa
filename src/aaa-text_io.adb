@@ -1,3 +1,7 @@
+with AAA.ANSI;
+
+with Ada.Strings.Unbounded;
+
 package body AAA.Text_IO is
 
    -------------------
@@ -16,6 +20,10 @@ package body AAA.Text_IO is
 
       Pos : Integer := Text'First;
 
+      ---------------
+      -- Next_Word --
+      ---------------
+
       function Next_Word return String is
       begin
          for I in Pos .. Text'Last loop
@@ -30,16 +38,33 @@ package body AAA.Text_IO is
          return Text (Pos .. Text'Last);
       end Next_Word;
 
+      --------------
+      -- Put_Line --
+      --------------
+
       procedure Put_Line is
-         Line : String (1 .. Line_Width);
-         LPos : Positive := Line'First;
+         use Ada.Strings.Unbounded;
+
+         Line : Unbounded_String;
+         --  Doing this with fixed strings and ANSI unknown extra lengths is
+         --  unnecessary trouble.
+
+         ----------
+         -- Used --
+         ----------
+
+         function Used return Natural
+         is (ANSI.Length (To_String (Line)));
 
          PPos : constant Integer := Pos; -- Initial Pos, to check we had some progress
 
+         ---------
+         -- Put --
+         ---------
+
          procedure Put (Word : String) is
          begin
-            Line (LPos .. LPos + Word'Length - 1) := Word;
-            LPos := LPos + Word'Length;
+            Append (Line, Word);
          end Put;
 
       begin
@@ -49,11 +74,11 @@ package body AAA.Text_IO is
          end if;
 
          --  Eat words until line is complete
-         while LPos + Next_Word'Length - 1 <= Line'Last loop
+         while Used + ANSI.Length (Next_Word) - 1 <= Line_Width loop
             Put (Next_Word);
             Pos := Pos + Next_Word'Length;
 
-            exit when LPos > Line'Last or else Pos > Text'Last;
+            exit when Used > Line_Width or else Pos > Text'Last;
 
             --  Advance on spaces
             if Text (Pos) = ' ' then
@@ -62,10 +87,11 @@ package body AAA.Text_IO is
             end if;
          end loop;
 
-         --  Forcefully break a word if line is still empty
+         --  Forcefully break a word if line is still empty. This won't work
+         --  with ANSI codes... So don't have too short lines, I guess.
          if Pos = PPos then
             declare
-               Remain : constant Positive := Line'Last - LPos;
+               Remain : constant Positive := Line_Width - Used;
                --  Space for text (without counting the '-')
             begin
                Put (Text (Pos .. Pos + Remain - 1));
@@ -75,7 +101,7 @@ package body AAA.Text_IO is
          end if;
 
          --  Final dump to file
-         Put_Line (File.all, Line (Line'First .. LPos - 1));
+         Put_Line (File.all, To_String (Line));
 
          --  Eat spaces that would start the next line:
          while Pos <= Text'Last and then Text (Pos) = ' ' loop
