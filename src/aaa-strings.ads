@@ -11,6 +11,10 @@ package AAA.Strings with Preelaborate is
 
    function Contains (Full : String; Sub : String) return Boolean;
 
+   function Has_Prefix (Full : String; Prefix : String) return Boolean;
+
+   function Has_Suffix (Full : String; Suffix : String) return Boolean;
+
    function Head (S : String; Separator : Character) return String;
    --  if S contains Separator, the lhs is returned. Otherwise Str is returned.
 
@@ -149,5 +153,21 @@ private
    Empty_Map    : constant Map    := (Maps.Empty_Map with null record);
    Empty_Set    : constant Set    := (Sets.Empty_Set with null record);
    Empty_Vector : constant Vector := (Vectors.Empty_Vector with null record);
+
+   ----------------
+   -- Has_Prefix --
+   ----------------
+
+   function Has_Prefix (Full, Prefix : String) return Boolean is
+     (Full'Length >= Prefix'Length
+      and then Full (Full'First .. Full'First + Prefix'Length - 1) = Prefix);
+
+   ----------------
+   -- Has_Suffix --
+   ----------------
+
+   function Has_Suffix (Full, Suffix : String) return Boolean is
+     (Full'Length >= Suffix'Length
+      and then Full (Full'Last - Suffix'Length + 1 .. Full'Last) = Suffix);
 
 end AAA.Strings;
