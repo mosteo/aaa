@@ -297,6 +297,13 @@ package body AAA.Strings is
    begin
       return R : String := S do
          GNAT.Case_Util.To_Mixed (R);
+
+         --  Also change to upper characters after a dot
+         for I in R'Range loop
+            if I /= R'First and then R (I - 1) = '.' then
+               R (I) := GNAT.Case_Util.To_Upper (R (I));
+            end if;
+         end loop;
       end return;
    end To_Mixed_Case;
 
