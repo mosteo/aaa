@@ -86,8 +86,7 @@ package AAA.Strings with Preelaborate is
                           C : Ada.Containers.Count_Type := 1)
                           renames Append;
 
-   procedure Append_Vector (V : in out Vector; V2 : Vector)
-                            renames Append;
+   procedure Append_Vector (V : in out Vector; V2 : Vector);
 
    procedure Append_To_Last_Line (V : in out Vector; S : String);
 

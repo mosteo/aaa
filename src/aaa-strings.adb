@@ -61,6 +61,15 @@ package body AAA.Strings is
       end return;
    end Append_To_Last_Line;
 
+   -------------------
+   -- Append_Vector --
+   -------------------
+
+   procedure Append_Vector (V : in out Vector; V2 : Vector) is
+   begin
+      V.Append (V2);
+   end Append_Vector;
+
    --------------------
    -- Camel_To_Mixed --
    --------------------
