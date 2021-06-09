@@ -83,4 +83,8 @@ project AAA is
       for Switches ("Ada") use ("-Es"); --  Symbolic traceback
    end Binder;
 
+   package Builder is
+      --  Do not remove as it is used in child projects
+   end Builder;
+
 end AAA;

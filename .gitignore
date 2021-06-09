@@ -6,5 +6,6 @@
 alire/
 alire.lock
 bin
+config/
 lib
 obj
