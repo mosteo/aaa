@@ -1,5 +1,8 @@
+with AAA.Debug;
+
 with Ada.Numerics.Discrete_Random;
 with Ada.Unchecked_Deallocation;
+
 with GNAT.OS_Lib;
 
 package body AAA.Filesystem is
@@ -152,6 +155,9 @@ package body AAA.Filesystem is
             Delete_Tree (This.Filename);
          end if;
       end if;
+   exception
+      when E : others =>
+         Debug.Put_Exception (E);
    end Finalize;
 
    ---------------
@@ -223,6 +229,9 @@ package body AAA.Filesystem is
         new Ada.Unchecked_Deallocation (Temp_File, Temp_File_Access);
    begin
       Free (This.Temp_Copy);
+   exception
+      when E : others =>
+         Debug.Put_Exception (E);
    end Finalize;
 
 end AAA.Filesystem;

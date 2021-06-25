@@ -1,4 +1,5 @@
 with AAA.ANSI;
+with AAA.Debug;
 with AAA.Filesystem;
 
 with Ada.Strings.Unbounded;
@@ -165,6 +166,9 @@ package body AAA.Text_IO is
          Close (File);
          Replacer.Replace;
       end;
+   exception
+      when E : others =>
+         Debug.Put_Exception (E);
    end Finalize;
 
    -----------
