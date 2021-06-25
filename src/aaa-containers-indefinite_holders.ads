@@ -40,6 +40,9 @@ package AAA.Containers.Indefinite_Holders with Preelaborate is
    function Get (This : Holder) return Const_Ref_Value with
      Pre => This.Is_Valid;
 
+   function Constant_Reference (This : Holder) return Const_Ref_Value
+     renames Get;
+
 private
 
    type Held_Access is access all Held;

@@ -190,17 +190,22 @@ package body AAA.Filesystem is
 
    function New_Replacement (File       : String;
                              Backup     : Boolean := True;
-                             Backup_Dir : String  := ".")
-                             return Replacer is
+                             Backup_Dir : String  := "")
+                             return Replacer
+   is
+      Backup_To : constant String :=
+                    (if Backup_Dir /= ""
+                     then Backup_Dir
+                     else Ada.Directories.Containing_Directory (File));
    begin
       return This : constant Replacer :=
         (Ada.Finalization.Limited_Controlled with
          Length     => File'Length,
-         Backup_Len => Backup_Dir'Length,
+         Backup_Len => Backup_To'Length,
          Original   => File,
          Backup     => Backup,
-         Backup_Dir => Backup_Dir,
-         Temp_Copy  => new Temp_File'(New_Name (In_Folder => Backup_Dir)))
+         Backup_Dir => Backup_To,
+         Temp_Copy  => new Temp_File'(New_Name (In_Folder => Backup_To)))
       do
          Ada.Directories.Copy_File (File, This.Temp_Copy.Filename);
       end return;

@@ -27,7 +27,7 @@ package body AAA.Debug is
    is
       use GNAT.IO;
    begin
-      Put_Line (Title
+      Put_Line (Title & ASCII.LF
                 & Image (E));
       if Stack_Trace then
          Put_Line (Debug.Stack_Trace);

@@ -23,7 +23,8 @@ package AAA.Filesystem is
    --  The file is deleted once an object of this type goes out of scope.
    --  If the file/folder was never created on disk nothing will happen.
 
-   function New_Name (In_Folder : String := ".") return Temp_File;
+   function New_Name (In_Folder : String := ".") return Temp_File
+     with Pre => In_Folder /= "";
    --  This finds a new random name; it does not create anything.
 
    function Filename (This : Temp_File) return String;
@@ -48,11 +49,12 @@ package AAA.Filesystem is
 
    function New_Replacement (File       : String;
                              Backup     : Boolean := True;
-                             Backup_Dir : String  := ".")
+                             Backup_Dir : String  := "")
                              return Replacer;
    --  Receives a file to be modified, and prepares a copy in a temporary. If
    --  Backup, once the replacement is performed, the original file is kept as
-   --  ".prev". Backup_Dir is used for this ".prev" file.
+   --  ".prev". Backup_Dir is used for this ".prev" file. When backup dir is
+   --  empty, the containing directory of File is used.
 
    function Editable_Name (This : Replacer) return String;
    --  Obtain the editable copy full name

@@ -44,7 +44,8 @@ package AAA.Text_IO is
                   return File;
    --  Load a text file into memory. If Backup, when saving takes place the
    --  original is renamed to ".prev". Backup_Dir optionally designates where
-   --  the backup file will be moved.
+   --  the backup file will be moved. When backup dir is empty, the containing
+   --  directory of File is used.
 
    function Lines (This : aliased in out File)
                    return access Strings.Vector;
@@ -53,7 +54,8 @@ package AAA.Text_IO is
                            Lines      : Strings.Vector;
                            Backup     : Boolean := True;
                            Backup_Dir : String  := "");
-   --  Add the given lines to the end of the file
+   --  Add the given lines to the end of the file. When backup dir is empty,
+   --  the containing directory of File is used.
 
 private
 

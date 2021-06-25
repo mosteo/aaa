@@ -2,6 +2,7 @@ with AAA.ANSI;
 with AAA.Debug;
 with AAA.Filesystem;
 
+with Ada.Directories;
 with Ada.Strings.Unbounded;
 
 package body AAA.Text_IO is
@@ -189,13 +190,18 @@ package body AAA.Text_IO is
    is
       use Ada.Text_IO;
       F : File_Type;
+
+      Backup_To : constant String :=
+                    (if Backup_Dir /= ""
+                     then Backup_Dir
+                     else Ada.Directories.Containing_Directory (From));
    begin
       return This : File := (Ada.Finalization.Limited_Controlled with
                              Length     => From'Length,
-                             Backup_Len => Backup_Dir'Length,
+                             Backup_Len => Backup_To'Length,
                              Name       => From,
                              Backup     => Backup,
-                             Backup_Dir => Backup_Dir,
+                             Backup_Dir => Backup_To,
                              Lines      => <>,
                              Orig       => <>)
       do
