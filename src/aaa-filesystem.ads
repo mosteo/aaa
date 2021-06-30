@@ -3,6 +3,10 @@ private with Ada.Finalization;
 
 package AAA.Filesystem is
 
+   function Is_File (Path : String) return Boolean;
+
+   function Is_Folder (Path : String) return Boolean;
+
    procedure Traverse_Tree (Start   : String;
                             Doing   : access procedure
                               (Item : Ada.Directories.Directory_Entry_Type;

@@ -7,6 +7,20 @@ with GNAT.OS_Lib;
 
 package body AAA.Filesystem is
 
+   -------------
+   -- Is_File --
+   -------------
+
+   function Is_File (Path : String) return Boolean
+   is (GNAT.OS_Lib.Is_Regular_File (Path));
+
+   ---------------
+   -- Is_Folder --
+   ---------------
+
+   function Is_Folder (Path : String) return Boolean
+   is (GNAT.OS_Lib.Is_Directory (Path));
+
    ------------------------
    -- Backup_If_Existing --
    ------------------------
