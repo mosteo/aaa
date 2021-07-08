@@ -125,6 +125,23 @@ package body AAA.Text_IO is
       end if;
    end Put_Paragraph;
 
+   --------------------
+   -- Put_Paragraphs --
+   --------------------
+
+   procedure Put_Paragraphs (Text        : Strings.Vector;
+                             Line_Width  : Line_Widths := Default_Line_Width;
+                             Line_Prefix : String := "";
+                             Filling     : Filling_Modes := Greedy;
+                             File        : Ada.Text_IO.File_Access :=
+                               Ada.Text_IO.Standard_Output)
+   is
+   begin
+      for Line of Text loop
+         Put_Paragraph (Line, Line_Width, Line_Prefix, Filling, File);
+      end loop;
+   end Put_Paragraphs;
+
    ------------------
    -- Append_Lines --
    ------------------

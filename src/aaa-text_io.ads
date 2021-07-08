@@ -16,7 +16,7 @@ package AAA.Text_IO is
    Default_Line_Width : constant := 79;
 
    type Filling_Modes is (Greedy);
-   --  More fancy modes exist, not implemented for now.
+   --  Fancier modes exist, not implemented for now.
 
    procedure Put_Paragraph (Text        : String;
                             Line_Width  : Line_Widths := Default_Line_Width;
@@ -31,6 +31,14 @@ package AAA.Text_IO is
    --  Line_Prefix is prepended to all lines, only if
    --  Line_Prefix'Length < Line_Width - 2.
    --  Caveat: at least one full line will be allocated.
+
+   procedure Put_Paragraphs (Text        : Strings.Vector;
+                             Line_Width  : Line_Widths := Default_Line_Width;
+                             Line_Prefix : String := "";
+                             Filling     : Filling_Modes := Greedy;
+                             File        : Ada.Text_IO.File_Access :=
+                               Ada.Text_IO.Standard_Output);
+   --  Call Put_Paragraph on every line of Text
 
    --  A convenience type to hold a complete text file in memory as a vector of
    --  lines. On destruction, changes to the contents are written back to disk.
