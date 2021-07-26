@@ -18,6 +18,10 @@ package AAA.Filesystem is
    --  If File exists, copy to file.prev. If Base_Dir /= "", it is instead
    --  copied to Base_Dir / Simple_Name (file) & ".prev"
 
+   procedure Remove_Folder_If_Empty (Path : String);
+   --  Attempt to remove a folder, but do not complain if unable (because not
+   --  empty or not existing).
+
    --  TEMP_FILE: obtain a temporary name with optional cleanup
 
    type Temp_File (<>) is tagged limited private;

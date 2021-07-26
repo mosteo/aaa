@@ -68,6 +68,19 @@ package body AAA.Filesystem is
       end if;
    end Ensure_Deletable;
 
+   ----------------------------
+   -- Remove_Folder_If_Empty --
+   ----------------------------
+
+   procedure Remove_Folder_If_Empty (Path : String) is
+      use Ada.Directories;
+   begin
+      Ada.Directories.Delete_Directory (Path);
+   exception
+      when Name_Error | Use_Error =>
+         null;
+   end Remove_Folder_If_Empty;
+
    -------------------
    -- Traverse_Tree --
    -------------------
