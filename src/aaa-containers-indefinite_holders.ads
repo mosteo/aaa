@@ -8,6 +8,8 @@ package AAA.Containers.Indefinite_Holders with Preelaborate is
 
    type Holder is tagged private;
 
+   Empty_Holder : constant Holder;
+
    procedure Clear (This : in out Holder);
 
    procedure Hold (This : in out Holder; Elem : Held);
@@ -40,6 +42,9 @@ package AAA.Containers.Indefinite_Holders with Preelaborate is
    function Get (This : Holder) return Const_Ref_Value with
      Pre => This.Is_Valid;
 
+   function Constant_Reference (This : Holder) return Const_Ref_Value
+     renames Get;
+
 private
 
    type Held_Access is access all Held;
@@ -53,5 +58,8 @@ private
 
    overriding
    procedure Finalize (This : in out Holder);
+
+   Empty_Holder : constant Holder := (Ada.Finalization.Controlled with
+                                      Item => null);
 
 end AAA.Containers.Indefinite_Holders;

@@ -1,5 +1,8 @@
 with AAA.ANSI;
+with AAA.Debug;
+with AAA.Filesystem;
 
+with Ada.Directories;
 with Ada.Strings.Unbounded;
 
 package body AAA.Text_IO is
@@ -121,5 +124,112 @@ package body AAA.Text_IO is
          end loop;
       end if;
    end Put_Paragraph;
+
+   --------------------
+   -- Put_Paragraphs --
+   --------------------
+
+   procedure Put_Paragraphs (Text        : Strings.Vector;
+                             Line_Width  : Line_Widths := Default_Line_Width;
+                             Line_Prefix : String := "";
+                             Filling     : Filling_Modes := Greedy;
+                             File        : Ada.Text_IO.File_Access :=
+                               Ada.Text_IO.Standard_Output)
+   is
+   begin
+      for Line of Text loop
+         Put_Paragraph (Line, Line_Width, Line_Prefix, Filling, File);
+      end loop;
+   end Put_Paragraphs;
+
+   ------------------
+   -- Append_Lines --
+   ------------------
+
+   procedure Append_Lines (File       : String;
+                           Lines      : Strings.Vector;
+                           Backup     : Boolean := True;
+                           Backup_Dir : String  := "")
+   is
+      F : AAA.Text_IO.File := Load (File, Backup, Backup_Dir);
+   begin
+      F.Lines.Append (Lines);
+   end Append_Lines;
+
+   --------------
+   -- Finalize --
+   --------------
+
+   overriding
+   procedure Finalize (This : in out File) is
+      use Ada.Text_IO;
+      use type Strings.Vector;
+
+      File : File_Type;
+   begin
+      if This.Lines = This.Orig then
+         return;
+      end if;
+
+      declare
+         Replacer : Filesystem.Replacer :=
+                      Filesystem.New_Replacement (This.Name,
+                                                  This.Backup,
+                                                  This.Backup_Dir);
+      begin
+         Open (File, Out_File, Replacer.Editable_Name);
+         for Line of This.Lines loop
+            Put_Line (File, Line);
+         end loop;
+         Close (File);
+         Replacer.Replace;
+      end;
+   exception
+      when E : others =>
+         Debug.Put_Exception (E);
+   end Finalize;
+
+   -----------
+   -- Lines --
+   -----------
+
+   function Lines (This : aliased in out File) return access Strings.Vector
+   is (This.Lines'Access);
+
+   ----------
+   -- Load --
+   ----------
+
+   function Load (From       : String;
+                  Backup     : Boolean := True;
+                  Backup_Dir : String := "")
+                  return File
+   is
+      use Ada.Text_IO;
+      F : File_Type;
+
+      Backup_To : constant String :=
+                    (if Backup_Dir /= ""
+                     then Backup_Dir
+                     else Ada.Directories.Containing_Directory (From));
+   begin
+      return This : File := (Ada.Finalization.Limited_Controlled with
+                             Length     => From'Length,
+                             Backup_Len => Backup_To'Length,
+                             Name       => From,
+                             Backup     => Backup,
+                             Backup_Dir => Backup_To,
+                             Lines      => <>,
+                             Orig       => <>)
+      do
+         Open (F, In_File, From);
+         while not End_Of_File (F) loop
+            This.Orig.Append (Get_Line (F));
+         end loop;
+         Close (F);
+
+         This.Lines := This.Orig;
+      end return;
+   end Load;
 
 end AAA.Text_IO;
