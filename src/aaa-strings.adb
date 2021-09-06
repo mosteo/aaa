@@ -224,17 +224,86 @@ package body AAA.Strings is
    -- Split --
    -----------
 
-   function Split (S : String; Separator : Character) return Vector is
+   function Split (Text      : String;
+                   Separator : Character;
+                   Side      : Halves := Head;
+                   From      : Halves := Head;
+                   Count     : Positive := 1;
+                   Raises    : Boolean  := True) return String
+   is
+      Seen : Natural := 0;
+      Pos  : Integer := (if From = Head then Text'First else Text'Last);
+      Inc  : constant Integer := (if From = Head then 1 else -1);
+   begin
+      loop
+         if Text (Pos) = Separator then
+            Seen := Seen + 1;
+
+            if Seen = Count then
+               if Side = Head then
+                  return Text (Text'First .. Pos - 1);
+               else
+                  return Text (Pos + 1 .. Text'Last);
+               end if;
+            end if;
+         end if;
+
+         Pos := Pos + Inc;
+
+         exit when Pos not in Text'Range;
+      end loop;
+
+      if Raises then
+         raise Constraint_Error with "Not enought separators found";
+      else
+         return Text;
+      end if;
+   end Split;
+
+   -------------
+   -- Shorten --
+   -------------
+
+   function Shorten (Text       : String;
+                     Max_Length : Natural;
+                     Trim_Side  : Halves := Head)
+                     return String
+   is
+      Ellipsis : constant String := "(...)";
+   begin
+      if Text'Length <= Max_Length then
+         return Text;
+      elsif Trim_Side = Head then
+         return Ellipsis
+                & Ada.Strings.Fixed.Tail (Text, Max_Length - Ellipsis'Length);
+      else
+         return Ada.Strings.Fixed.Head (Text, Max_Length - Ellipsis'Length)
+                & Ellipsis;
+      end if;
+   end Shorten;
+
+   -----------
+   -- Split --
+   -----------
+
+   function Split (S         : String;
+                   Separator : Character;
+                   Trim      : Boolean := False)
+                   return Vector
+   is
+      function Do_Trim (S : String) return String
+      is (if Trim then AAA.Strings.Trim (S) else S);
+
       Prev : Integer := S'First - 1;
    begin
       return V : Vector do
          for I in S'Range loop
             if S (I) = Separator then
-               V.Append (S (Prev + 1 .. I - 1));
+               V.Append (Do_Trim (S (Prev + 1 .. I - 1)));
                Prev := I;
             end if;
          end loop;
-         V.Append (S (Prev + 1 .. S'Last));
+         V.Append (Do_Trim (S (Prev + 1 .. S'Last)));
       end return;
    end Split;
 
@@ -327,6 +396,37 @@ package body AAA.Strings is
         (S,
          Left  => Ada.Strings.Maps.To_Set (Target),
          Right => Ada.Strings.Maps.To_Set (Target)));
+
+   ------------
+   -- Crunch --
+   ------------
+
+   function Crunch (Text : String) return String is
+      Result : String (Text'Range);
+      Src    : Natural := Text'First;
+      Dst    : Natural := Result'First;
+   begin
+      --  Trim initial spaces:
+      while Src <= Text'Last and then Text (Src) = ' ' loop
+         Src := Src + 1;
+      end loop;
+
+      --  Remove excess spaces:
+      while Src <= Text'Last loop
+         if Src = Text'First
+           or else
+            Text (Src) /= ' '
+           or else
+            Text (Src - 1) /= ' '
+         then
+            Result (Dst) := Text (Src);
+            Dst := Dst + 1;
+         end if;
+         Src := Src + 1;
+      end loop;
+
+      return Result (Result'First .. Dst - 1);
+   end Crunch;
 
    -----------
    -- Write --
