@@ -30,16 +30,41 @@ package AAA.Strings with Preelaborate is
    function To_Lower_Case (S : String) return String
                            renames Ada.Characters.Handling.To_Lower;
 
+   function To_Upper_Case (S : String) return String
+                           renames Ada.Characters.Handling.To_Upper;
+
    function To_Mixed_Case (S : String) return String;
 
    function Trim (S : String; Target : Character := ' ') return String;
    --  Remove Target at S extremes
+
+   function Crunch (Text : String) return String;
+   --  Remove consecutive spaces
 
    function Replace (Text  : String;
                      Match : String;
                      Subst : String)
                      return String;
    --  Replace every occurrence of Match in Text by Subst
+
+   type Halves is (Head, Tail);
+
+   function Split (Text      : String;
+                   Separator : Character;
+                   Side      : Halves := Head;
+                   From      : Halves := Head;
+                   Count     : Positive := 1;
+                   Raises    : Boolean  := True) return String;
+   --  Split in two at seeing Count times the separator
+   --  Start the search according to From, and return Side at that point
+   --  If not enough separators are seen then raises or whole string
+
+   function Shorten (Text       : String;
+                     Max_Length : Natural;
+                     Trim_Side  : Halves := Head)
+                     return String with
+     Pre => Max_Length >= 5;
+   --  Replaces the given end with "(...)" if the text is too long
 
    ----------
    -- Maps --
@@ -119,9 +144,13 @@ package AAA.Strings with Preelaborate is
 
    procedure Prepend (V : in out Vector; S : Set'Class);
 
-   function Split (S : String; Separator : Character) return Vector;
+   function Split (S         : String;
+                   Separator : Character;
+                   Trim      : Boolean := False)
+                   return Vector;
    --  Split a string in substrings at Separator positions. A Separator at
    --  S'First or S'Last will result in an empty string also being included.
+   --  If Trim, whitespace is removed around entries.
 
    function Tail (V           : Vector;
                   Allow_Empty : Boolean := False)
