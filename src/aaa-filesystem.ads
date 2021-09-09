@@ -55,14 +55,17 @@ package AAA.Filesystem is
    --  modified and can be tested as the client sees fit. 3) If the new file is
    --  proper, the old one is renamed to .prev and the new one takes its place.
 
-   function New_Replacement (File       : String;
-                             Backup     : Boolean := True;
-                             Backup_Dir : String  := "")
+   function New_Replacement (File              : String;
+                             Backup            : Boolean := True;
+                             Backup_Dir        : String  := "";
+                             Allow_No_Original : Boolean := False)
                              return Replacer;
    --  Receives a file to be modified, and prepares a copy in a temporary. If
    --  Backup, once the replacement is performed, the original file is kept as
    --  ".prev". Backup_Dir is used for this ".prev" file. When backup dir is
-   --  empty, the containing directory of File is used.
+   --  empty, the containing directory of File is used. If Allow_No_Original is
+   --  True, the function will not fail when File is not a path to an existing
+   --  file.
 
    function Editable_Name (This : Replacer) return String;
    --  Obtain the editable copy full name

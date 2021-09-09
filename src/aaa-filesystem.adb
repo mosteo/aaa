@@ -217,7 +217,8 @@ package body AAA.Filesystem is
 
    function New_Replacement (File       : String;
                              Backup     : Boolean := True;
-                             Backup_Dir : String  := "")
+                             Backup_Dir : String  := "";
+                             Allow_No_Original : Boolean := False)
                              return Replacer
    is
       Backup_To : constant String :=
@@ -234,7 +235,13 @@ package body AAA.Filesystem is
          Backup_Dir => Backup_To,
          Temp_Copy  => new Temp_File'(New_Name (In_Folder => Backup_To)))
       do
-         Ada.Directories.Copy_File (File, This.Temp_Copy.Filename);
+         if Is_File (File) then
+            Ada.Directories.Copy_File (File, This.Temp_Copy.Filename);
+
+         elsif not Allow_No_Original then
+            raise Program_Error
+              with "Invalid original file for replacement: " & File;
+         end if;
       end return;
    end New_Replacement;
 
