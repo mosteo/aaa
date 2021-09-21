@@ -10,3 +10,6 @@ Alex's Ada Assortment of Utilities
 - Indefinite containers.
 - Enumeration validity/conversions of string images.
 - On-demand stack backtraces.
+- String containers and utilities.
+- Simple subprocess spawning.
+- Write-through minimal cache for objects stored in files
