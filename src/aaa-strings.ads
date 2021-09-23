@@ -106,6 +106,20 @@ package AAA.Strings with Preelaborate is
    function Append (L, R : Vector) return Vector;
    --  Append R at the end of L.
 
+   overriding
+   function "&" (V : Vector;
+                 S : String) return Vector
+                 renames Append;
+
+   overriding
+   function "&" (L : Vector;
+                 R : Vector) return Vector
+                 renames Append;
+
+   overriding
+   function "&" (L : String;
+                 R : Vector) return Vector;
+
    procedure Append_Line (V : in out Vector;
                           S : String;
                           C : Ada.Containers.Count_Type := 1)
@@ -170,6 +184,11 @@ package AAA.Strings with Preelaborate is
    --  Dump contents to a given file
 
 private
+
+   overriding
+   function "&" (L : String;
+                 R : Vector) return Vector
+   is (To_Vector (L) & R);
 
    function Contains (Full : String; Sub : String) return Boolean
    is (for some I in Full'Range =>

@@ -167,7 +167,7 @@ package body AAA.Processes is
 
          if R.Exit_Code /= 0 and then Raise_On_Error then
             raise Child_Error with
-              "child exited with code" & R.Exit_Code'Image;
+              "child exited with code " & Strings.Trim (R.Exit_Code'Image);
          end if;
       end return;
    end Run;
