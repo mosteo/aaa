@@ -183,6 +183,17 @@ package AAA.Strings with Preelaborate is
                     Separator : String := ASCII.LF & "");
    --  Dump contents to a given file
 
+   function Diff (A, B        : AAA.Strings.Vector;
+                  A_Name      : String := "A";
+                  B_Name      : String := "B";
+                  Skip_Header : Boolean := False)
+                  return AAA.Strings.Vector;
+   --  Return a vector containing a unified diff of A against B.
+   --
+   --  The result contains an optional header:
+   --  --- <A_Name>
+   --  +++ <B_Name>
+
 private
 
    overriding
