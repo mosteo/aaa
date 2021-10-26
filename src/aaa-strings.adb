@@ -30,6 +30,30 @@ package body AAA.Strings is
       end return;
    end Append;
 
+   ---------
+   -- "=" --
+   ---------
+
+   overriding
+   function "=" (L : Vector;
+                 R : Vector) return Boolean
+   is
+   begin
+      if L.Count /= R.Count then
+         return False;
+      end if;
+
+      for Index
+      in L.First_Index .. L.Last_Index
+      loop
+         if L.Element (Index) /= R.Element (Index) then
+            return False;
+         end if;
+      end loop;
+
+      return True;
+   end "=";
+
    -------------------------
    -- Append_To_Last_Line --
    -------------------------

@@ -120,6 +120,10 @@ package AAA.Strings with Preelaborate is
    function "&" (L : String;
                  R : Vector) return Vector;
 
+   overriding
+   function "=" (L : Vector;
+                 R : Vector) return Boolean;
+
    procedure Append_Line (V : in out Vector;
                           S : String;
                           C : Ada.Containers.Count_Type := 1)
