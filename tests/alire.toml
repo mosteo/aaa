@@ -1,0 +1,15 @@
+name = "tests"
+description = ""
+version = "0.0.0"
+
+executables = ["tests"]
+
+[configuration]
+disabled = false
+
+[[depends-on]]
+aaa = "*"
+aunit = "^21"
+
+[[pins]]
+aaa = { path='../../aaa' }
