@@ -14,13 +14,13 @@ project AAA is
    for Library_Kind use Library_Type;
 
    type Enabled_Kind is ("enabled", "disabled");
-   Compile_Checks : Enabled_Kind := External ("AAA_COMPILE_CHECKS", "enabled");
+   Compile_Checks : Enabled_Kind := External ("AAA_COMPILE_CHECKS", "disabled");
    Runtime_Checks : Enabled_Kind := External ("AAA_RUNTIME_CHECKS", "enabled");
-   Style_Checks : Enabled_Kind := External ("AAA_STYLE_CHECKS", "enabled");
-   Contracts_Checks : Enabled_Kind := External ("AAA_CONTRACTS", "enabled");
+   Style_Checks : Enabled_Kind := External ("AAA_STYLE_CHECKS", "disabled");
+   Contracts_Checks : Enabled_Kind := External ("AAA_CONTRACTS", "disabled");
 
    type AAA_Build_Kind is ("debug", "optimize");
-   Build_Mode : AAA_Build_Kind := External ("AAA_BUILD_MODE", "debug");
+   Build_Mode : AAA_Build_Kind := External ("AAA_BUILD_MODE", "optimize");
 
    Compile_Checks_Switches := ();
    case Compile_Checks is
