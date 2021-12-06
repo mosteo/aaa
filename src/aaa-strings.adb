@@ -1,6 +1,7 @@
 with Ada.Streams.Stream_IO;
 with Ada.Strings.Fixed;
 with Ada.Strings.Maps;
+with Ada.Containers.Bounded_Vectors;
 
 with GNAT.Case_Util;
 
@@ -28,6 +29,30 @@ package body AAA.Strings is
          Result.Append (R);
       end return;
    end Append;
+
+   ---------
+   -- "=" --
+   ---------
+
+   overriding
+   function "=" (L : Vector;
+                 R : Vector) return Boolean
+   is
+   begin
+      if L.Count /= R.Count then
+         return False;
+      end if;
+
+      for Index
+      in L.First_Index .. L.Last_Index
+      loop
+         if L.Element (Index) /= R.Element (Index) then
+            return False;
+         end if;
+      end loop;
+
+      return True;
+   end "=";
 
    -------------------------
    -- Append_To_Last_Line --
@@ -455,5 +480,119 @@ package body AAA.Strings is
          end if;
          raise;
    end Write;
+
+   ----------
+   -- Diff --
+   ----------
+
+   function Diff (A, B        : AAA.Strings.Vector;
+                  A_Name      : String := "A";
+                  B_Name      : String := "B";
+                  Skip_Header : Boolean := False)
+                  return AAA.Strings.Vector
+   is
+      --  Tentative Myers diff implementation
+
+      Max : constant Integer := A.Count + B.Count;
+
+      type Action_Kind is (Keep, Insert, Remove);
+
+      type Action is record
+         Kind  : Action_Kind;
+         Index : Positive;
+      end record;
+
+      package Action_Vectors is new
+        Ada.Containers.Bounded_Vectors (Positive, Action);
+
+      subtype History_Vector
+      is Action_Vectors.Vector (Ada.Containers.Count_Type (Max));
+
+      type Frontier is record
+         X       : Integer := 0;
+         History : History_Vector;
+      end record;
+
+      V : array (-Max .. Max) of Frontier;
+
+      K : Integer;
+      X, Y : Integer := 0;
+      Go_Down : Boolean;
+
+      History : History_Vector;
+
+      Result : AAA.Strings.Vector;
+   begin
+      if A.First_Index /= 1 then
+         raise Program_Error;
+      elsif B.First_Index /= 1 then
+         raise Program_Error;
+      end if;
+
+      V (1).X := 0;
+
+      Main_Loop :
+      for D in 0 .. Max loop
+         K := -D;
+         while K <= D loop
+            Go_Down := (K = -D)
+              or else
+                ((K /= D) and then (V (K - 1).X < V (K + 1).X));
+
+            if Go_Down then
+               X := V (K + 1).X;
+               History := V (K + 1).History;
+            else
+               X := V (K - 1).X + 1;
+               History := V (K - 1).History;
+            end if;
+
+            Y := X - K;
+
+            if Go_Down and then Y in 1 .. B.Count then
+               History.Append ((Insert, Y));
+            elsif X in 1 .. A.Count then
+               History.Append ((Remove, X));
+            end if;
+
+            while X in 0 .. A.Count - 1
+              and then
+                Y in 0 .. B.Count - 1
+                and then
+                  A.Element (X + 1) = B.Element (Y + 1)
+            loop
+               X := X + 1;
+               Y := Y + 1;
+               History.Append ((Keep, X));
+            end loop;
+
+            if X >= A.Count and Y >= B.Count then
+               exit Main_Loop;
+            else
+               V (K).X := X;
+               V (K).History := History;
+            end if;
+
+            K := K + 2;
+         end loop;
+      end loop Main_Loop;
+
+      if not Skip_Header then
+         Result.Append (String'("--- " & A_Name));
+         Result.Append (String'("+++ " & B_Name));
+      end if;
+
+      for Elt of History loop
+         case Elt.Kind is
+            when Keep =>
+               Result.Append (String'("  " & A.Element (Elt.Index)));
+            when Remove =>
+               Result.Append (String'("- " & A.Element (Elt.Index)));
+            when Insert =>
+               Result.Append (String'("+ " & B.Element (Elt.Index)));
+         end case;
+      end loop;
+      return Result;
+   end Diff;
 
 end AAA.Strings;

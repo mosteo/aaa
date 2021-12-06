@@ -120,6 +120,10 @@ package AAA.Strings with Preelaborate is
    function "&" (L : String;
                  R : Vector) return Vector;
 
+   overriding
+   function "=" (L : Vector;
+                 R : Vector) return Boolean;
+
    procedure Append_Line (V : in out Vector;
                           S : String;
                           C : Ada.Containers.Count_Type := 1)
@@ -182,6 +186,17 @@ package AAA.Strings with Preelaborate is
                     Filename  : String;
                     Separator : String := ASCII.LF & "");
    --  Dump contents to a given file
+
+   function Diff (A, B        : AAA.Strings.Vector;
+                  A_Name      : String := "A";
+                  B_Name      : String := "B";
+                  Skip_Header : Boolean := False)
+                  return AAA.Strings.Vector;
+   --  Return a vector containing a unified diff of A against B.
+   --
+   --  The result contains an optional header:
+   --  --- <A_Name>
+   --  +++ <B_Name>
 
 private
 
