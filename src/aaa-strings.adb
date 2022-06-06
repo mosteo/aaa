@@ -566,7 +566,7 @@ package body AAA.Strings is
                History.Append ((Keep, X));
             end loop;
 
-            if X >= A.Count and Y >= B.Count then
+            if X >= A.Count and then Y >= B.Count then
                exit Main_Loop;
             else
                V (K).X := X;

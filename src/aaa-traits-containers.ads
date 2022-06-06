@@ -28,7 +28,7 @@ package AAA.Traits.Containers with Preelaborate is
 
    --  Reuse the gist of standard containers
 
-   --  The above reference types bug out during instatiations (E is not visible)
-   --  That's the reason for the alternate Reference signatures
+   --  The above reference types bug out during instatiations (E is not
+   --  visible) That's the reason for the alternate Reference signatures
 
 end AAA.Traits.Containers;
