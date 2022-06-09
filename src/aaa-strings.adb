@@ -550,9 +550,9 @@ package body AAA.Strings is
             Y := X - K;
 
             if Go_Down and then Y in 1 .. B.Count then
-               History.Append ((Insert, Y));
+               History.Append (Action'(Insert, Y));
             elsif X in 1 .. A.Count then
-               History.Append ((Remove, X));
+               History.Append (Action'(Remove, X));
             end if;
 
             while X in 0 .. A.Count - 1
@@ -563,7 +563,7 @@ package body AAA.Strings is
             loop
                X := X + 1;
                Y := Y + 1;
-               History.Append ((Keep, X));
+               History.Append (Action'(Keep, X));
             end loop;
 
             if X >= A.Count and then Y >= B.Count then
