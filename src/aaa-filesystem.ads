@@ -7,6 +7,16 @@ package AAA.Filesystem is
 
    function Is_Folder (Path : String) return Boolean;
 
+   function Relative_Path (From, Into : String) return String
+     with Pre => From'Length > 0 and then Into'Length > 0;
+   --  Returns the shortest relative path going From --> Into. If these don't
+   --  belong to the same drive (Windows only), the absolute path equivalent to
+   --  Into is returned, even if Into was a relative path initially (in which
+   --  case the current directory is used to resolve it).
+   --  TODO/WARNING: consider whether the filesystem is case-insensitive or
+   --  case-preserving. Currently no case transformations will be applied
+   --  and case-sensitive will be presumed.
+
    procedure Traverse_Tree (Start   : String;
                             Doing   : access procedure
                               (Item : Ada.Directories.Directory_Entry_Type;

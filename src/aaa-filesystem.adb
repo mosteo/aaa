@@ -1,4 +1,5 @@
 with AAA.Debug;
+with AAA.Strings;
 
 with Ada.Numerics.Discrete_Random;
 with Ada.Unchecked_Deallocation;
@@ -67,6 +68,89 @@ package body AAA.Filesystem is
          end if;
       end if;
    end Ensure_Deletable;
+
+   -------------------
+   -- Relative_Path --
+   -------------------
+
+   function Relative_Path (From, Into : String) return String is
+      package Adirs renames Ada.Directories;
+      package OS renames GNAT.OS_Lib;
+      Sep : constant Character := OS.Directory_Separator;
+   begin
+      if not OS.Is_Absolute_Path (From) or else not OS.Is_Absolute_Path (Into)
+      then
+         return Relative_Path (Adirs.Full_Name (From), Adirs.Full_Name (Into));
+      end if;
+
+      --  We have absolute paths to deal with from here on
+
+      --  If there is not even the first char in common, these are in different
+      --  drives (Windows). Cannot happen in UNIX-like systems.
+
+      if From (From'First) /= Into (Into'First) then
+         return Into;
+      end if;
+
+      --  If from is not a folder, this does not make sense either
+
+      if not OS.Is_Directory (From) then
+         return Into;
+      end if;
+
+      declare
+         use type Strings.Vector;
+         From_Parts : Strings.Vector := Strings.Split (From, Sep);
+         Into_Parts : Strings.Vector := Strings.Split (Into, Sep);
+      begin
+
+         --  Remove spurious final segments in case Full_Name gives "this/"
+
+         if From_Parts.Last_Element = "" then
+            From_Parts.Delete_Last;
+         end if;
+
+         if Into_Parts.Last_Element = "" then
+            Into_Parts.Delete_Last;
+         end if;
+
+         --  Remove common prefix
+
+         while not From_Parts.Is_Empty and then not Into_Parts.Is_Empty and then
+           From_Parts.First_Element = Into_Parts.First_Element
+         loop
+            From_Parts.Delete_First;
+            Into_Parts.Delete_First;
+         end loop;
+
+         if From_Parts = Into_Parts then -- They're the same
+            return ".";
+         else
+
+            --  Now the parts are rooted at a common ancestor. We go up if
+            --  necessary and then down.
+
+            declare
+               Result : Strings.Vector;
+            begin
+
+               --  Up
+
+               for I in 1 .. From_Parts.Length loop
+                  Result.Append ("..");
+               end loop;
+
+               --  And down!
+
+               Result.Append (Into_Parts); -- May be empty, it'd be OK
+
+               return Result.Flatten (Sep);
+
+            end;
+
+         end if;
+      end;
+   end Relative_Path;
 
    ----------------------------
    -- Remove_Folder_If_Empty --
