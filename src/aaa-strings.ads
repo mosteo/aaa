@@ -167,8 +167,9 @@ package AAA.Strings with Preelaborate is
                    Trim      : Boolean := False)
                    return Vector;
    --  Split a string in substrings at Separator positions. A Separator at
-   --  S'First or S'Last will result in an empty string also being included.
-   --  If Trim, whitespace is removed around entries.
+   --  S'First or S'Last will result in an empty string also being included. An
+   --  empty string or (containing only spaces and Trim) will result in an
+   --  empty vector. If Trim, whitespace is removed around entries.
 
    function Tail (V           : Vector;
                   Allow_Empty : Boolean := False)

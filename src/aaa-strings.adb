@@ -321,6 +321,10 @@ package body AAA.Strings is
 
       Prev : Integer := S'First - 1;
    begin
+      if Do_Trim (S) = "" then
+         return V : constant Vector := Empty;
+      end if;
+
       return V : Vector do
          for I in S'Range loop
             if S (I) = Separator then
