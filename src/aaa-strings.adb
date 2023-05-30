@@ -322,7 +322,7 @@ package body AAA.Strings is
       Prev : Integer := S'First - 1;
    begin
       if Do_Trim (S) = "" then
-         return V : constant Vector := Empty;
+         return V : constant Vector := Empty_Vector;
       end if;
 
       return V : Vector do
