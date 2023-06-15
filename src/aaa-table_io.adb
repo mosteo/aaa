@@ -7,6 +7,8 @@ with Ada.Strings.Wide_Wide_Unbounded;
 
 with GNAT.IO;
 
+with Umwi;
+
 package body AAA.Table_IO is
 
    package UTF   renames Ada.Strings.UTF_Encoding;
@@ -70,6 +72,17 @@ package body AAA.Table_IO is
                             Align : Ada.Strings.Alignment)
                             return Wide_Wide_String
    is
+      use all type Ada.Strings.Alignment;
+
+      Extra : constant Natural := Umwi.Width (Text) - Text'Length;
+      --  We are putting the string in a field that will have excess length
+      --  at the time of rendering if it contains any wide character. Move
+      --  below is not taking into account Unicode grapheme clusters nor
+      --  wide characters, so we need to substract the excess length from the
+      --  result. Still, I suspect for this to be 100% correct, Text'Length
+      --  should be replaced with the length in grapheme clusters, which Umwi
+      --  does not yet provide.
+
       Field : Wide_Wide_String (1 ..
                                 T.Max_Widths (Col) + ANSI.Count_Extra (Text));
    begin
@@ -77,7 +90,15 @@ package body AAA.Table_IO is
                                         Field,
                                         Drop    => Ada.Strings.Error,
                                         Justify => Align);
-      return Field;
+
+      if Extra = 0 then
+         return Field;
+      else
+         case Align is
+            when Right  => return Field (1 + Extra .. Field'Last);
+            when others => return Field (1 .. Field'Last - Extra);
+         end case;
+      end if;
    end Prepare_Padded;
 
    -----------

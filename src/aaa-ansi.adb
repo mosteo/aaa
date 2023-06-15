@@ -1,6 +1,8 @@
 with Ada.Characters.Wide_Wide_Latin_1;
 with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
 
+with Umwi;
+
 package body AAA.ANSI is
 
    package Chars renames Ada.Characters.Wide_Wide_Latin_1;
@@ -36,7 +38,7 @@ package body AAA.ANSI is
 
    function Length (Text : Wide_Wide_String) return Natural is
    begin
-      return Text'Length - Count_Extra (Text);
+      return Umwi.Width (Text, Umwi.Default) - Count_Extra (Text);
    end Length;
 
    ------------

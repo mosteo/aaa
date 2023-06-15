@@ -116,8 +116,9 @@ package body AAA.Filesystem is
 
          --  Remove common prefix
 
-         while not From_Parts.Is_Empty and then not Into_Parts.Is_Empty and then
-           From_Parts.First_Element = Into_Parts.First_Element
+         while not From_Parts.Is_Empty
+           and then not Into_Parts.Is_Empty
+           and then From_Parts.First_Element = Into_Parts.First_Element
          loop
             From_Parts.Delete_First;
             Into_Parts.Delete_First;
