@@ -32,6 +32,7 @@ package AAA.Table_IO with Preelaborate is
                     Align     : Alignments := (1 .. 0 => <>);
                     Put_Line  : access procedure (Line : String) := null);
    --  Will print the table using GNAT.IO, unless Put_Line is supplied
+   --  FIXME:  Align is currently ignored
 
 private
 

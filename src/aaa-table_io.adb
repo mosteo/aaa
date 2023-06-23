@@ -2,7 +2,6 @@ with AAA.ANSI;
 
 with Ada.Containers;
 with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
-with Ada.Strings.Wide_Wide_Fixed;
 with Ada.Strings.Wide_Wide_Unbounded;
 
 with GNAT.IO;
@@ -72,33 +71,44 @@ package body AAA.Table_IO is
                             Align : Ada.Strings.Alignment)
                             return Wide_Wide_String
    is
-      use all type Ada.Strings.Alignment;
+      pragma Unreferenced (Align);
 
-      Extra : constant Natural := Umwi.Width (Text) - Text'Length;
+      Extra : Integer := Umwi.Width (Text) - Text'Length;
       --  We are putting the string in a field that will have excess length
       --  at the time of rendering if it contains any wide character. Move
       --  below is not taking into account Unicode grapheme clusters nor
       --  wide characters, so we need to substract the excess length from the
       --  result. Still, I suspect for this to be 100% correct, Text'Length
       --  should be replaced with the length in grapheme clusters, which Umwi
-      --  does not yet provide.
+      --  does not yet provide (YES, this is necessary, as otherwise invisible
+      --  code points will make Text'Length larger than Width).
 
       Field : Wide_Wide_String (1 ..
-                                T.Max_Widths (Col) + ANSI.Count_Extra (Text));
+                                  T.Max_Widths (Col)
+                                  - Extra
+                                  + ANSI.Count_Extra (Text))
+        := (others => ' ');
    begin
-      Ada.Strings.Wide_Wide_Fixed.Move (Text,
-                                        Field,
-                                        Drop    => Ada.Strings.Error,
-                                        Justify => Align);
-
-      if Extra = 0 then
-         return Field;
-      else
-         case Align is
-            when Right  => return Field (1 + Extra .. Field'Last);
-            when others => return Field (1 .. Field'Last - Extra);
-         end case;
+      if Extra < 0 then  -- Wut? TODO: check why this is happening sometimes
+         --  GNAT.IO.Put_Line
+         --    ("w:" & Umwi.Width (Text)'Image
+         --     & "; l:" & Text'Length'Image
+         --     & "; t:'" & Ada.Strings.UTF_Encoding.Wide_Wide_Strings.Encode
+         --       (Text) & "'");
+         --  raise Program_Error;
+         Extra := 0;
       end if;
+
+      --  Alignment is broken, considering that ANSI is counted as regular text
+      --  by Ada.Strings.Move, so let's just use left-align for the time being.
+
+      if Field'Length < Text'Length then -- ??? Shouldn't really happen
+         return Text;
+      else
+         Field (Field'First .. Field'First + Text'Length - 1) := Text;
+      end if;
+
+      return Field;
    end Prepare_Padded;
 
    -----------
