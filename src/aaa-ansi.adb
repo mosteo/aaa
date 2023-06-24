@@ -38,7 +38,7 @@ package body AAA.ANSI is
 
    function Length (Text : Wide_Wide_String) return Natural is
    begin
-      return Umwi.Width (Text, Umwi.Default) - Count_Extra (Text);
+      return Umwi.Count (Text, Umwi.Default).Width - Count_Extra (Text);
    end Length;
 
    ------------

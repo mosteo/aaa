@@ -10,6 +10,8 @@ with Umwi;
 
 package body AAA.Table_IO is
 
+   Debug : constant Boolean := False;
+
    package UTF   renames Ada.Strings.UTF_Encoding;
 
    use all type Ada.Containers.Count_Type;
@@ -71,42 +73,51 @@ package body AAA.Table_IO is
                             Align : Ada.Strings.Alignment)
                             return Wide_Wide_String
    is
-      pragma Unreferenced (Align);
+      use all type Ada.Strings.Alignment;
 
-      Extra : Integer := Umwi.Width (Text) - Text'Length;
-      --  We are putting the string in a field that will have excess length
-      --  at the time of rendering if it contains any wide character. Move
-      --  below is not taking into account Unicode grapheme clusters nor
-      --  wide characters, so we need to substract the excess length from the
-      --  result. Still, I suspect for this to be 100% correct, Text'Length
-      --  should be replaced with the length in grapheme clusters, which Umwi
-      --  does not yet provide (YES, this is necessary, as otherwise invisible
-      --  code points will make Text'Length larger than Width).
+      Counts : constant Umwi.Counts := Umwi.Count (Text);
 
-      Field : Wide_Wide_String (1 ..
-                                  T.Max_Widths (Col)
-                                  - Extra
-                                  + ANSI.Count_Extra (Text))
-        := (others => ' ');
+      --  We need Field to be as wide as T.Max_Widths (Col), so any width
+      --  missing is due to Text being shorter (Max - Text.Width). But also
+      --  we need to take into account the invisible ANSI codes for the total
+      --  Field length, as it's not included in Text'Length.
+
+      Pad    : constant Wide_Wide_String :=
+                 (1 .. ANSI.Count_Extra (Text)
+                       + T.Max_Widths (Col)
+                       - Counts.Width => ' ');
+
+      Mid    : constant Integer := Pad'Length / 2;
+
+      Field  : constant Wide_Wide_String :=
+                 ""
+                 & (case Align is
+                       when Left   => "",
+                       when Right  => Pad,
+                       when Center => Pad (1 .. Mid))
+                 & Text
+                 & (case Align is
+                       when Left   => Pad,
+                       when Right  => "",
+                       when Center => Pad (Mid + 1 .. Pad'Last))
+      ;
+
    begin
-      if Extra < 0 then  -- Wut? TODO: check why this is happening sometimes
-         --  GNAT.IO.Put_Line
-         --    ("w:" & Umwi.Width (Text)'Image
-         --     & "; l:" & Text'Length'Image
-         --     & "; t:'" & Ada.Strings.UTF_Encoding.Wide_Wide_Strings.Encode
-         --       (Text) & "'");
-         --  raise Program_Error;
-         Extra := 0;
+      if Debug then
+         GNAT.IO.Put_Line
+           (""
+            & "  g:" & Counts.Clusters'Image
+            & "; w:" & Counts.Width'Image
+            & "; l:" & Counts.Points'Image
+            & "; f:" & Field'Length'Image
+            & "; m:" & Natural'(T.Max_Widths (Col))'Image
+            & "; a:" & ANSI.Count_Extra (Text)'Image
+            & "; t:'" & Ada.Strings.UTF_Encoding.Wide_Wide_Strings.Encode
+              (Text) & "'");
       end if;
 
       --  Alignment is broken, considering that ANSI is counted as regular text
       --  by Ada.Strings.Move, so let's just use left-align for the time being.
-
-      if Field'Length < Text'Length then -- ??? Shouldn't really happen
-         return Text;
-      else
-         Field (Field'First .. Field'First + Text'Length - 1) := Text;
-      end if;
 
       return Field;
    end Prepare_Padded;

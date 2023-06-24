@@ -25,4 +25,4 @@ website = "https://github.com/mosteo/aaa"
 umwi = "^1.0"
 
 [[pins]]
-umwi = { url="https://github.com/mosteo/umwi", commit="c8aabdc73a6cd2d46d80175944dd7d47e090d1b7" }
+umwi = { url="https://github.com/mosteo/umwi", branch="main" }
