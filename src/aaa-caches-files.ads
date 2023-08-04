@@ -16,6 +16,15 @@ package AAA.Caches.Files is
                      Filename : String)
                      return Cached;
 
+   type Cached_Info is record
+      Element : Cached;
+      Reused  : Boolean; -- True on cache hit
+   end record;
+
+   function Element (This     : in out Cache;
+                     Filename : String)
+                     return Cached_Info;
+
    overriding
    function Has_Element (This : Cache) return Boolean;
 

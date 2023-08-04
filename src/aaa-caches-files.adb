@@ -16,7 +16,17 @@ package body AAA.Caches.Files is
 
    function Element (This     : in out Cache;
                      Filename : String)
-                     return Cached is
+                     return Cached
+   is (Element (This, Filename).Element);
+
+   -------------
+   -- Element --
+   -------------
+
+   function Element (This     : in out Cache;
+                     Filename : String)
+                     return Cached_Info
+      is
 
       use type Ada.Calendar.Time;
       use type Ada.Directories.File_Size;
@@ -28,7 +38,7 @@ package body AAA.Caches.Files is
 
    begin
       if This.Has_Element and then Unchanged then
-         return This.Data.Value;
+         return (This.Data.Value, True);
       else
          This.Data :=
            (Valid => True,
@@ -36,7 +46,7 @@ package body AAA.Caches.Files is
             Time  => Ada.Directories.Modification_Time (Filename),
             Value => Load (Filename));
 
-         return This.Data.Value;
+         return (This.Data.Value, False);
       end if;
    end Element;
 
