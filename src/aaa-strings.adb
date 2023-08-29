@@ -409,12 +409,38 @@ package body AAA.Strings is
    -- To_Vector --
    ---------------
 
+   function To_Vector (This : Set) return Vector is
+   begin
+      return V : Vector do
+         for Elem of This loop
+            V.Append (Elem);
+         end loop;
+      end return;
+   end To_Vector;
+
+   ---------------
+   -- To_Vector --
+   ---------------
+
    function To_Vector (S : String) return Vector is
    begin
       return V : Vector do
          V.Append (S);
       end return;
    end To_Vector;
+
+   ------------
+   -- To_Set --
+   ------------
+
+   function To_Set (V : Vector'Class) return Set is
+   begin
+      return S : Set do
+         for Elem of V loop
+            S.Include (Elem);
+         end loop;
+      end return;
+   end To_Set;
 
    ----------
    -- Trim --

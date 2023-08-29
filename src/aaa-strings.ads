@@ -6,6 +6,8 @@ with Ada.Containers.Indefinite_Vectors;
 
 package AAA.Strings with Preelaborate is
 
+   type Vector;
+
    function Camel_To_Mixed (S : String) return String;
    --  Converts ThisThing into This_Thing
 
@@ -85,6 +87,8 @@ package AAA.Strings with Preelaborate is
    type Set is new Sets.Set with null record;
 
    Empty_Set : constant Set;
+
+   function To_Vector (This : Set) return Vector;
 
    -------------
    -- Vectors --
@@ -179,6 +183,9 @@ package AAA.Strings with Preelaborate is
      or else raise Constraint_Error with "Cannot take tail of empty vector";
    --  Return V without its first element. If Allow_Empty, tail of an empty
    --  vector will be another empty vector.
+
+   function To_Set (V : Vector'Class) return Set;
+   --  Note that this will drop duplicates
 
    not overriding
    function To_Vector (S : String) return Vector;
