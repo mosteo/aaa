@@ -2,11 +2,15 @@ with Ada.Finalization;
 
 generic
    type Held (<>) is private;
+   with function "=" (L, R : Held) return Boolean is <>;
 package AAA.Containers.Indefinite_Holders with Preelaborate is
 
-   --  Simple holder to work around GNAT holders bug
+   --  Simple holder to work around GNAT holders bug. Comparison uses the held
+   --  value.
 
    type Holder is tagged private;
+
+   overriding function "=" (L, R : Holder) return Boolean;
 
    Empty_Holder : constant Holder;
 

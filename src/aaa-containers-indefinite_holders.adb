@@ -2,6 +2,23 @@ with Ada.Unchecked_Deallocation;
 
 package body AAA.Containers.Indefinite_Holders is
 
+   ---------
+   -- "=" --
+   ---------
+
+   overriding function "=" (L, R : Holder) return Boolean is
+   begin
+      if L.Is_Empty xor R.Is_Empty then
+         return False;
+      end if;
+
+      if L.Is_Empty and then R.Is_Empty then
+         return True;
+      end if;
+
+      return "=" (L.Item.all, R.Item.all);
+   end "=";
+
    -----------
    -- Clear --
    -----------
