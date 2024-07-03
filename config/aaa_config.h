@@ -2,7 +2,7 @@
 #ifndef AAA_CONFIG_H
 #define AAA_CONFIG_H
 
-#define CRATE_VERSION "0.2.6-dev"
+#define CRATE_VERSION "0.3.0-dev"
 #define CRATE_NAME "aaa"
 
 #define ALIRE_HOST_OS "linux"
@@ -15,6 +15,6 @@
 #define BUILD_PROFILE_VALIDATION 2
 #define BUILD_PROFILE_DEVELOPMENT 3
 
-#define BUILD_PROFILE  1
+#define BUILD_PROFILE  2
 
 #endif

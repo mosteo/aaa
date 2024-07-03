@@ -90,6 +90,9 @@ package AAA.Strings with Preelaborate is
 
    function To_Vector (This : Set) return Vector;
 
+   function Union (L : Set; R : String) return Set
+   is (L.Union (To_Set (R)));
+
    -------------
    -- Vectors --
    -------------
