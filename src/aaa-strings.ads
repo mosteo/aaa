@@ -169,6 +169,14 @@ package AAA.Strings with Preelaborate is
 
    procedure Prepend (V : in out Vector; S : Set'Class);
 
+   function Slice (V : Vector; First, Last : Integer) return Vector;
+
+   function Up_To (V : Vector; Pos : Integer) return Vector
+   is (V.Slice (V.First_Index, Pos));
+
+   function From (V : Vector; Pos : Integer) return Vector
+   is (V.Slice (Pos, V.Last_Index));
+
    function Split (S         : String;
                    Separator : Character;
                    Trim      : Boolean := False)

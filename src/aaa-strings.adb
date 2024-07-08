@@ -308,6 +308,27 @@ package body AAA.Strings is
    end Shorten;
 
    -----------
+   -- Slice --
+   -----------
+
+   function Slice (V : Vector; First, Last : Integer) return Vector is
+   begin
+      if Last < First then
+         return Empty_Vector;
+      elsif First < V.First_Index then
+         raise Constraint_Error with "First < V'First";
+      elsif Last > V.Last_Index then
+         raise Constraint_Error with "Last > V'Last";
+      end if;
+
+      return Result : Vector do
+         for I in First .. Last loop
+            Result.Append (V (I));
+         end loop;
+      end return;
+   end Slice;
+
+   -----------
    -- Split --
    -----------
 
