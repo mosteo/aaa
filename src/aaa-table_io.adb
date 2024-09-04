@@ -53,6 +53,29 @@ package body AAA.Table_IO is
       return Reference'(Table => T'Access);
    end Append;
 
+   ------------
+   -- Header --
+   ------------
+
+   procedure Header (T : in out Table; Cell : String) is
+   begin
+      T.Headers.Append (UTF.Wide_Wide_Strings.Decode (Cell));
+      T.Append (Cell);
+   end Header;
+
+   ------------
+   -- Header --
+   ------------
+
+   function Header (T    : aliased in out Table;
+                    Cell : String)
+                    return Reference
+   is
+   begin
+      T.Header (Cell);
+      return Reference'(Table => T'Access);
+   end Header;
+
    -------------
    -- New_Row --
    -------------

@@ -16,12 +16,20 @@ package AAA.Table_IO with Preelaborate is
 
    type Table is tagged private;
 
-   type Reference (Table : access Table_IO.Table) is limited null record
+   type Reference (Table : access Table_IO.Table'Class) is limited null record
      with Implicit_Dereference => Table;
 
    procedure Append (T : in out Table; Cell : String);
 
    function Append (T : aliased in out Table; Cell : String) return Reference;
+
+   procedure Header (T : in out Table; Cell : String);
+   --  Headers are printed as given, but are keep internally for the structured
+   --  output as field names. There should be as many headers as columns.
+
+   function Header (T    : aliased in out Table;
+                    Cell : String)
+                    return Reference;
 
    procedure New_Row (T : in out Table);
 
@@ -48,6 +56,7 @@ private
 
    type Table is tagged record
       Next_Column : Positive := 1;
+      Headers     : Row;
       Rows        : Row_Vectors.Vector;
       Max_Widths  : Natural_Vectors.Vector;
    end record;
