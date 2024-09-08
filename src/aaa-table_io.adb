@@ -4,7 +4,11 @@ with Ada.Containers;
 with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
 with Ada.Strings.Wide_Wide_Unbounded;
 
+with AnsiAda;
+
 with GNAT.IO;
+
+with LML.Output.Factory;
 
 with Umwi;
 
@@ -59,6 +63,10 @@ package body AAA.Table_IO is
 
    procedure Header (T : in out Table; Cell : String) is
    begin
+      if T.Rows.Length > 1 then
+         raise Program_Error with "Headers must be added before any data rows";
+      end if;
+
       T.Headers.Append (UTF.Wide_Wide_Strings.Decode (Cell));
       T.Append (Cell);
    end Header;
@@ -190,6 +198,69 @@ package body AAA.Table_IO is
             end loop;
          end;
       end loop;
+   end Print;
+
+   -----------
+   -- Print --
+   -----------
+
+   procedure Print (T        : Table;
+                    Format   : LML.Formats;
+                    Put_Line : access procedure (Line : String) := null)
+   is
+      Builder : LML.Output.Builder'Class := LML.Output.Factory.Get (Format);
+   begin
+
+      --  Ada_TOML requires an anonymous top-level table, and as a consequence
+      --  the nested array must have a name. We could alternatively use a
+      --  map with indexes as keys, but as those would have to be strings in
+      --  the TOML case at least, we would lose the original ordering unless
+      --  padding were added, which would in turn difficult data extraction.
+
+      if Format in LML.TOML then
+         Builder.Begin_Map;
+         Builder.Insert ("data");
+      end if;
+
+      Builder.Begin_Vec;
+
+      for Row in 2 .. Natural (T.Rows.Length) loop
+
+         --  Skip last empty line, which is naturally filtered out in the
+         --  non-structured alternative. Here we are creating the empty
+         --  record too soon (in between loops).
+
+         if Row < Natural (T.Rows.Length)
+           or else Natural (T.Rows (Row).Length) > 0
+         then
+
+            Builder.Begin_Map;
+
+            for Col in 1 .. Integer (T.Rows (Row).Length) loop
+               if Col > Integer (T.Headers.Length) then
+                  raise Constraint_Error with
+                    "Missing header for column" & Col'Image;
+               end if;
+
+               Builder.Insert
+                 (LML.Decode (AnsiAda.Scrub (LML.Encode (T.Headers (Col)))));
+               Builder.Append
+                 (LML.Decode (AnsiAda.Scrub (LML.Encode (T.Rows (Row) (Col)))))
+               ;
+            end loop;
+
+            Builder.End_Map;
+
+         end if;
+      end loop;
+
+      Builder.End_Vec;
+
+      if Format in LML.TOML then
+         Builder.End_Map;
+      end if;
+
+      Put_Line (LML.Encode (Builder.To_Text));
    end Print;
 
 end AAA.Table_IO;

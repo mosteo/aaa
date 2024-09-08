@@ -22,7 +22,9 @@ tags = ["miscellanea", "utility"]
 website = "https://github.com/mosteo/aaa"
 
 [[depends-on]]
-umwi = "~0.1.0"
+ansiada = "^1.1.0"
+lml     = "~0.1.0"
+umwi    = "~0.1.0"
 
 # [[pins]]
 # umwi = { url="https://github.com/mosteo/umwi", branch="main" }

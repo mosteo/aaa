@@ -3,7 +3,9 @@ with Ada.Containers.Vectors;
 
 with Ada.Strings;
 
-package AAA.Table_IO with Preelaborate is
+with LML;
+
+package AAA.Table_IO is
 
    --  A type to format tables according to the max length of fields. The table
    --  is ANSI-aware, so it will work properly for text with embedded ANSI
@@ -41,6 +43,10 @@ package AAA.Table_IO with Preelaborate is
                     Put_Line  : access procedure (Line : String) := null);
    --  Will print the table using GNAT.IO, unless Put_Line is supplied
    --  FIXME:  Align is currently ignored
+
+   procedure Print (T        : Table;
+                    Format   : LML.Formats;
+                    Put_Line : access procedure (Line : String) := null);
 
 private
 
