@@ -26,5 +26,12 @@ ansiada = "^1.1.0"
 lml     = "~0.1.0"
 umwi    = "~0.1.0"
 
-# [[pins]]
+[[pins]]
+ansiada = { path="../ansi-ada" }
+lml = { path="../lml_ada" }
 # umwi = { url="https://github.com/mosteo/umwi", branch="main" }
+
+[[actions]]
+type = "test"
+directory = "test"
+command = ["alr", "run"]
