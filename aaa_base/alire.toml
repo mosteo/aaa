@@ -21,16 +21,6 @@ maintainers-logins = ["mosteo"]
 tags = ["miscellanea", "utility"]
 website = "https://github.com/mosteo/aaa"
 
-[[depends-on]]
-ansiada = "^1.1.0"
-lml     = "~0.1.0"
-umwi    = "~0.1.0"
-
-[[pins]]
-ansiada = { path="../ansi-ada" }
-lml = { path="../lml_ada" }
-# umwi = { url="https://github.com/mosteo/umwi", branch="main" }
-
 [[actions]]
 type = "test"
 directory = "test"

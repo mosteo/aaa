@@ -2,22 +2,24 @@ name: Build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main, master ]
   pull_request:
   workflow_dispatch:
 
+env:
+  AAA_STYLE_CHECKS: enabled
+  AAA_RUNTIME_CHECKS: enabled
+  AAA_COMPILE_CHECKS: enabled
+  AAA_CONTRACTS: enabled
+
 jobs:
-  build:
+  aaa:
     strategy:
+      fail-fast: false
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
         gnat_version: [^10, ^11, ^12, ^13, ^14]
     runs-on: ${{ matrix.os }}
-    env:
-      AAA_STYLE_CHECKS: enabled
-      AAA_RUNTIME_CHECKS: enabled
-      AAA_COMPILE_CHECKS: enabled
-      AAA_CONTRACTS: enabled
 
     steps:
     - name: Checkout
@@ -26,10 +28,33 @@ jobs:
     - name: Set up Alire and toolchain
       uses: alire-project/setup-alire@v4
       with:
-        toolchain: gnat_native${{ matrix.gnat_version }} 
+        toolchain: gnat_native${{ matrix.gnat_version }} gprbuild
 
     - name: Build
-      run: alr -q build
+      run: cd aaa_base && alr -q build
 
     - name: Run tests
-      run: cd tests && alr -q run
+      run: cd aaa_base/tests && alr -q run
+
+  aaa_texts:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        gnat_version: [^10, ^11, ^12, ^13, ^14]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up Alire and toolchain
+      uses: alire-project/setup-alire@v4
+      with:
+        toolchain: gnat_native${{ matrix.gnat_version }} gprbuild
+
+    - name: Build
+      run: cd aaa_texts && alr -q build
+
+    - name: Run tests
+      run: cd aaa_texts/test && alr -q run

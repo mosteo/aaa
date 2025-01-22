@@ -12,4 +12,4 @@ aaa = "*"
 aunit = "^21"
 
 [[pins]]
-aaa = { path='../../aaa' }
+aaa = { path='..' }
