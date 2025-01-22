@@ -20,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
-        gnat_version: [^10, ^11, ^12, ^13, ^14]
+        gnat_version: [10, 11, 12, 13, 14]
         exclude:
           # Some combos are not supported due to missing pieces in the toolchain
           # No builds of gcc-10, -11, -12 that work on arm64
@@ -45,7 +45,7 @@ jobs:
     - name: Set up Alire and toolchain
       uses: alire-project/setup-alire@v4
       with:
-        toolchain: gnat_native${{ matrix.gnat_version }} gprbuild
+        toolchain: gnat_native^${{ matrix.gnat_version }} gprbuild
 
     - name: Build
       run: cd ${{inputs.crate}} && alr -q build
