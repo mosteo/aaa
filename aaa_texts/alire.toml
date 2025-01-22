@@ -17,8 +17,10 @@ umwi    = "~0.1.0"
 
 [[pins]]
 aaa = { path="../aaa_base" }
-ansiada = { path="../../ansi-ada" }
-lml = { path="../../lml_ada" }
+
+# lml = { path="../../lml_ada" }
+lml = { url="https://github.com/mosteo/lml_ada", branch="feat/yeison" }
+
 # umwi = { url="https://github.com/mosteo/umwi", branch="main" }
 
 [[actions]]
