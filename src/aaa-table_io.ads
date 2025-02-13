@@ -60,11 +60,16 @@ private
 
    package Row_Vectors is new Ada.Containers.Vectors (Positive, Row);
 
+   type Sections is (Nothing, Headers, Data);
+
    type Table is tagged record
       Next_Column : Positive := 1;
       Headers     : Row;
       Rows        : Row_Vectors.Vector;
       Max_Widths  : Natural_Vectors.Vector;
+      Section     : Sections := Nothing;
+      Is_Header   : Boolean  := False;
+      --  Internal state to discriminate in Append when a header is being added
    end record;
 
 end AAA.Table_IO;
