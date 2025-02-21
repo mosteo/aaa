@@ -79,11 +79,27 @@ package body AAA.Processes is
       --            & Command & " " & Arguments.Flatten
       --            & " > " & Name.all);
 
-      Spawn (Program_Name           => Command,
-             Args                   => Arg_List,
-             Output_File_Descriptor => File,
-             Return_Code            => Exit_Code,
-             Err_To_Out             => Err_To_Out);
+      declare
+         Full_Path_Ptr : GNAT.OS_Lib.String_Access
+           := GNAT.OS_Lib.Locate_Exec_On_Path (Command);
+         Full_Path     : constant String :=
+                           (if Full_Path_Ptr /= null
+                            then Full_Path_Ptr.all
+                            else "");
+      begin
+         if Full_Path = "" then
+            raise Constraint_Error with
+              "Executable not found: " & Command;
+         else
+            GNAT.OS_Lib.Free (Full_Path_Ptr);
+         end if;
+
+         Spawn (Program_Name           => Full_Path,
+                Args                   => Arg_List,
+                Output_File_Descriptor => File,
+                Return_Code            => Exit_Code,
+                Err_To_Out             => Err_To_Out);
+      end;
 
       Close (File); -- Can't raise
       Read_Output;
