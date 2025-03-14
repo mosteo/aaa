@@ -1,0 +1,6 @@
+abstract project Aaa_Tests_List_Config is
+   Test_Files := (
+       "aaa_tests-strings-check_vector_equality.adb"
+      ,"aaa_tests-strings-vector_diffs.adb"
+   );
+end Aaa_Tests_List_Config;

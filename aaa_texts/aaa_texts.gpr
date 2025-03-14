@@ -1,4 +1,6 @@
 with "config/aaa_texts_config.gpr";
+with "aaa.gpr";
+with "lml.gpr";
 project Aaa_Texts is
 
    for Library_Name use "Aaa_Texts";

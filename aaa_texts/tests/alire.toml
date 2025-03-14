@@ -1,0 +1,14 @@
+name = 'aaa_texts_tests'
+description = ''
+version = '0.0.0-test'
+
+[[depends-on]]
+aaa_texts = '*'
+
+[[pins]]
+aaa = { path = '../../aaa_base' }
+aaa_texts = { path = '..' }
+lml = { path = '../../../lml' }
+
+[build-profiles]
+aaa_texts = 'validation'

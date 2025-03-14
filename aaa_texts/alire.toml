@@ -15,15 +15,5 @@ ansiada = "^1.1.0"
 lml     = "~0.1.0"
 umwi    = "~0.1.0"
 
-[[pins]]
-aaa = { path="../aaa_base" }
-
-# lml = { path="../../lml_ada" }
-lml = { url="https://github.com/mosteo/lml_ada", branch="feat/yeison" }
-
-# umwi = { url="https://github.com/mosteo/umwi", branch="main" }
-
-[[actions]]
-type = "test"
-directory = "test"
-command = ["alr", "run"]
+[test]
+runner = "alire"

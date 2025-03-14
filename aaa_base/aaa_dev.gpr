@@ -1,6 +1,0 @@
-aggregate project AAA_Dev is
-
-   for Project_Files use ("aaa.gpr",
-                          "aaa_demos.gpr");
-
-end AAA_Dev;
