@@ -1,4 +1,5 @@
 with AAA.ANSI;
+with AAA.Strings;
 
 with Ada.Containers;
 with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
@@ -26,6 +27,12 @@ package body AAA.Table_IO is
 
    procedure Append (T : in out Table; Cell : String) is
    begin
+      if T.Section = Headers and then not T.Is_Header then
+         raise Constraint_Error with
+           "Adding data before completing headers (missing New_Row?)";
+      end if;
+      T.Is_Header := False;
+
       declare
          Cell : constant Wide_Wide_String :=
                   UTF.Wide_Wide_Strings.Decode (Append.Cell);
@@ -67,6 +74,9 @@ package body AAA.Table_IO is
          raise Program_Error with "Headers must be added before any data rows";
       end if;
 
+      T.Section := Headers;
+      T.Is_Header := True;
+
       T.Headers.Append (UTF.Wide_Wide_Strings.Decode (Cell));
       T.Append (Cell);
    end Header;
@@ -90,6 +100,10 @@ package body AAA.Table_IO is
 
    procedure New_Row (T : in out Table) is
    begin
+      if not T.Rows.Is_Empty then
+         T.Section := Data;
+      end if;
+
       T.Next_Column := 1;
       T.Rows.Append (String_Vectors.Empty_Vector);
    end New_Row;
@@ -166,6 +180,11 @@ package body AAA.Table_IO is
       Wide_Separator : constant Wide_Wide_String :=
                          UTF.Wide_Wide_Strings.Decode (Separator);
    begin
+      if T.Section = Headers then
+         raise Constraint_Error
+           with "Headers section not yet complete (missing New_Row?)";
+      end if;
+
       for Row of T.Rows loop
          declare
             Line : Unbounded_Wide_Wide_String;
@@ -208,8 +227,14 @@ package body AAA.Table_IO is
                     Format   : LML.Formats;
                     Put_Line : access procedure (Line : String) := null)
    is
+      use AAA.Strings;
       Builder : LML.Output.Builder'Class := LML.Output.Factory.Get (Format);
    begin
+
+      if T.Section = Headers then
+         raise Constraint_Error
+           with "Headers section not yet complete (missing New_Row?)";
+      end if;
 
       --  Ada_TOML requires an anonymous top-level table, and as a consequence
       --  the nested array must have a name. We could alternatively use a
@@ -243,10 +268,14 @@ package body AAA.Table_IO is
                end if;
 
                Builder.Insert
-                 (LML.Decode (AnsiAda.Scrub (LML.Encode (T.Headers (Col)))));
+                 (LML.Decode
+                    (Trim (AnsiAda.Scrub (LML.Encode (T.Headers (Col))))));
                Builder.Append
-                 (LML.Decode (AnsiAda.Scrub (LML.Encode (T.Rows (Row) (Col)))))
-               ;
+                 (LML.Scalars.New_Text
+                    (LML.Decode
+                         (Trim
+                              (AnsiAda.Scrub
+                                 (LML.Encode (T.Rows (Row) (Col)))))));
             end loop;
 
             Builder.End_Map;

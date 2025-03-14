@@ -1,4 +1,5 @@
 with AAA.Debug;
+with AAA.Processes;
 with AAA.Strings;
 
 with Ada.Numerics.Discrete_Random;
@@ -51,19 +52,18 @@ package body AAA.Filesystem is
    procedure Ensure_Deletable (Path : String) is
       use Ada.Directories;
       use GNAT;
-      OK   : Boolean := False;
-      Args : OS_Lib.Argument_List_Access;
+      Args   : Strings.Vector;
+      Result : Processes.Result;
    begin
       if Exists (Path) and then
         Kind (Path) = Directory and then
         OS_Lib.Directory_Separator = '\'
       then
-         Args := OS_Lib.Argument_String_To_List ("-R /D /S " & Path & "\*");
+         Args := Strings.Split ("-R /D /S", ' ').Append (Path & "\*");
 
-         OS_Lib.Spawn ("attrib", Args.all, OK);
-         OS_Lib.Free (Args);
+         Result := Processes.Run (Strings.To_Vector ("attrib").Append (Args));
 
-         if not OK then
+         if Result.Exit_Code /= 0 then
             raise Program_Error with "failed to change attributes of " & Path;
          end if;
       end if;
