@@ -12,3 +12,4 @@ lml = { path = '../../../lml' }
 
 [build-profiles]
 aaa_texts = 'validation'
+aaa_texts_tests = 'validation'

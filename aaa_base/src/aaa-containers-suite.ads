@@ -15,6 +15,8 @@ package AAA.Containers.Suite with Preelaborate is
    package Sets is new Ada.Containers.Indefinite_Ordered_Sets (Stored);
    package Vecs is new Ada.Containers.Indefinite_Vectors (Positive, Stored);
 
+   type Vector is new Vecs.Vector with null record;
+
    -------------------
    --  Conversions  --
    -------------------
