@@ -9,4 +9,4 @@ aaa = '*'
 aaa = { path = '..' }
 
 [build-profiles]
-aaa = 'validation'
+"*" = "validation"

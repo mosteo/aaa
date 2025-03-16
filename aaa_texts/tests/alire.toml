@@ -11,5 +11,4 @@ aaa_texts = { path = '..' }
 lml = { path = '../../../lml' }
 
 [build-profiles]
-aaa_texts = 'validation'
-aaa_texts_tests = 'validation'
+"*" = "validation"
