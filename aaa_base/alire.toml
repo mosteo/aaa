@@ -1,5 +1,5 @@
 name = "aaa"
-version = "0.3.0-dev"
+version = "0.3.0"
 description = "Alex's Ada Assortment (of miscellaneous utilities)"
 
 long-description = """
@@ -23,8 +23,8 @@ website = "https://github.com/mosteo/aaa"
 
 [[actions]]
 type = "test"
-directory = "test"
-command = ["alr", "run"]
+directory = "tests"
+command = ["alr", "build"]
 
 [test]
 runner = "alire"

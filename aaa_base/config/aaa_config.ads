@@ -5,7 +5,7 @@ pragma Style_Checks (Off);
 package Aaa_Config is
    pragma Pure;
 
-   Crate_Version : constant String := "0.3.0-dev";
+   Crate_Version : constant String := "0.3.0";
    Crate_Name : constant String := "aaa";
 
    Alire_Host_OS : constant String := "linux";

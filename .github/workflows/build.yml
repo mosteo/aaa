@@ -57,4 +57,4 @@ jobs:
       run: cd ${{inputs.crate}} && alr -q build
 
     - name: Run tests
-      run: cd ${{inputs.crate}} && alr update && alr test
+      run: cd ${{inputs.crate}} && alr test
