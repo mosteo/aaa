@@ -1,0 +1,12 @@
+name = 'dev_tests'
+description = ''
+version = '0.0.0-test'
+
+[[depends-on]]
+dev = '*'
+
+[[pins]]
+dev = { path = '..' }
+
+[build-profiles]
+dev = 'validation'

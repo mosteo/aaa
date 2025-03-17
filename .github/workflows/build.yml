@@ -1,36 +1,60 @@
 name: Build
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      build:
+        description: 'Whether to run a plain `alr build`'
+        required: false
+        default: true
+        type: boolean
+      crate:
+        description: 'The crate to build'
+        required: true
+        type: string
+
+env:
+  AAA_STYLE_CHECKS: enabled
+  AAA_RUNTIME_CHECKS: enabled
+  AAA_COMPILE_CHECKS: enabled
+  AAA_CONTRACTS: enabled
 
 jobs:
   build:
+    name: test (${{inputs.crate}}, GNAT ${{ matrix.combo.gnat }}, ${{ matrix.combo.os }})
     strategy:
+      fail-fast: false
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-        gnat_version: [^10, ^11]
-        gprbuild_version: [^21]
-    runs-on: ${{ matrix.os }}
-    env:
-      AAA_STYLE_CHECKS: enabled
-      AAA_RUNTIME_CHECKS: enabled
-      AAA_COMPILE_CHECKS: enabled
-      AAA_CONTRACTS: enabled
+        combo: # Test an assorment of representative combinations
+          - os: macos-13
+            gnat: 13
+          - os: macos-latest
+            gnat: 14
+          - os: ubuntu-22.04
+            gnat: 10
+          - os: ubuntu-latest
+            gnat: 12
+          # Waiting for indexed compiler
+          # - os: ubuntu-24.04-arm
+          #   gnat: 14
+          - os: windows-latest
+            gnat: 11
+
+    runs-on: ${{ matrix.combo.os }}
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
     - name: Set up Alire and toolchain
-      uses: alire-project/setup-alire@v1
+      uses: alire-project/setup-alire@v4
       with:
-        toolchain: gprbuild${{ matrix.gprbuild_version }} gnat_native${{ matrix.gnat_version }} --disable-assistant
+        version: nightly # for [test]
+        toolchain: gnat_native^${{ matrix.combo.gnat }} gprbuild
 
     - name: Build
-      run: alr -q build
+      if: ${{inputs.build}}
+      run: cd ${{inputs.crate}} && alr -q build
 
     - name: Run tests
-      run: cd tests && alr -q run
+      run: cd ${{inputs.crate}} && alr test

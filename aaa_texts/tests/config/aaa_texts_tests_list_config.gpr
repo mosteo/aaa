@@ -1,0 +1,5 @@
+abstract project Aaa_Texts_Tests_List_Config is
+   Test_Files := (
+       "aaa_texts_tests-example_test.adb"
+   );
+end Aaa_Texts_Tests_List_Config;
