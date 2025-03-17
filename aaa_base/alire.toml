@@ -26,5 +26,5 @@ type = "test"
 directory = "tests"
 command = ["alr", "build"]
 
-[test]
-runner = "alire"
+# [test]
+# runner = "alire"
