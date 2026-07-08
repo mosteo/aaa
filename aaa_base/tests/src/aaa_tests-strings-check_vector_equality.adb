@@ -1,5 +1,7 @@
 pragma Style_Checks ("-gnatM120");
 
+pragma Alire_Test;
+
 with AAA.Strings; use AAA.Strings;
 
 procedure Aaa_Tests.Strings.Check_Vector_Equality is

@@ -119,24 +119,37 @@ package body AAA.Strings is
                      Separator : String := " ")
                      return String
    is
-
-      function Flatten (Pos : Positive; V : Vector) return String;
-
-      -------------
-      -- Flatten --
-      -------------
-
-      function Flatten (Pos : Positive; V : Vector) return String is
-        (if Pos = V.Count
-         then V (Pos)
-         else V (Pos) & Separator & Flatten (Pos + 1, V));
-
+      Length : Natural  := 0;
+      Pos    : Positive := 1;
    begin
-      if V.Is_Empty then
-         return "";
-      else
-         return Flatten (1, V);
+      --  Compute result length
+
+      for Line of V loop
+         Length := Length + Line'Length;
+      end loop;
+
+      --  Add length of separators
+
+      if not V.Is_Empty then
+         Length := Length + (V.Count - 1) * Separator'Length;
       end if;
+
+      --  Length might be zero if V is empty
+
+      return S : string (1 .. Length) do
+         for Line of V loop
+            S (Pos .. Pos + Line'Length - 1) := Line;
+            Pos := Pos + Line'Length;
+
+            if Pos + Separator'Length - 1 <= Length then
+               S (Pos .. Pos + Separator'Length - 1) := Separator;
+               Pos := Pos + Separator'Length;
+            end if;
+         end loop;
+
+         pragma Assert (Pos - 1 = Length,
+                        "Erroneous length computation in Flatten");
+      end return;
    end Flatten;
 
    -------------

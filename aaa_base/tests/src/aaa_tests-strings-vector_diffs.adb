@@ -1,5 +1,7 @@
 with AAA.Strings; use AAA.Strings;
 
+pragma Alire_Test;
+
 pragma Style_Checks ("-gnatM120");
 
 procedure Aaa_Tests.Strings.Vector_Diffs is
