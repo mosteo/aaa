@@ -27,18 +27,23 @@ jobs:
       matrix:
         combo: # Test an assorment of representative combinations
           - os: macos-13
-            gnat: 13
+            gnat: ^13
           - os: macos-latest
-            gnat: 14
+            gnat: ^14
           - os: ubuntu-22.04
-            gnat: 10
+            gnat: ^10
           - os: ubuntu-latest
-            gnat: 12
-          # Waiting for indexed compiler
-          # - os: ubuntu-24.04-arm
-          #   gnat: 14
+            gnat: ^12
+          - os: ubuntu-24.04-arm
+            gnat: ^14
           - os: windows-latest
-            gnat: 11
+            gnat: ^11
+          - os: ubuntu-latest
+            gnat: # latest
+          - os: macos-latest
+            gnat: # latest
+          - os: windows-latest
+            gnat: # latest
 
     runs-on: ${{ matrix.combo.os }}
 
@@ -50,7 +55,7 @@ jobs:
       uses: alire-project/setup-alire@v4
       with:
         version: nightly # for [test]
-        toolchain: gnat_native^${{ matrix.combo.gnat }} gprbuild
+        toolchain: gnat_native${{ matrix.combo.gnat }} gprbuild
 
     - name: Build
       if: ${{inputs.build}}

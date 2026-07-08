@@ -1,6 +1,6 @@
 with AAA.Strings; use AAA.Strings;
 
-pragma Alire_Test;
+pragma Alire_Test (Should_Fail, False);
 
 pragma Style_Checks ("-gnatM120");
 
