@@ -1,6 +1,6 @@
-package Aaa_Tests is
+pragma Ignore_Pragma (Alire_Test);
 
-   pragma Ignore_Pragma (Alire_Test);
+package Aaa_Tests is
 
    procedure Assert (Cond : Boolean; Text : String);
 
