@@ -1,11 +1,10 @@
-with AAA.ANSI;
+with AAA.ANSI.Tools;
 with AAA.Strings;
 
 with Ada.Containers;
 with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
 with Ada.Strings.Wide_Wide_Unbounded;
 
-with AnsiAda;
 
 with GNAT.IO;
 
@@ -42,10 +41,11 @@ package body AAA.Table_IO is
          end if;
 
          if Natural (T.Max_Widths.Length) < T.Next_Column then
-            T.Max_Widths.Append (ANSI.Length (Cell));
+            T.Max_Widths.Append (ANSI.Tools.Length (Cell));
          else
             T.Max_Widths (T.Next_Column) :=
-              Natural'Max (ANSI.Length (Cell), T.Max_Widths (T.Next_Column));
+              Natural'Max (ANSI.Tools.Length (Cell),
+                           T.Max_Widths (T.Next_Column));
          end if;
 
          T.Rows (Natural (T.Rows.Length)).Append (Cell);
@@ -128,7 +128,7 @@ package body AAA.Table_IO is
       --  Field length, as it's not included in Text'Length.
 
       Pad    : constant Wide_Wide_String :=
-                 (1 .. ANSI.Count_Extra (Text)
+                 (1 .. ANSI.Tools.Count_Extra (Text)
                        + T.Max_Widths (Col)
                        - Counts.Width => ' ');
 
@@ -156,7 +156,7 @@ package body AAA.Table_IO is
             & "; l:" & Counts.Points'Image
             & "; f:" & Field'Length'Image
             & "; m:" & Natural'(T.Max_Widths (Col))'Image
-            & "; a:" & ANSI.Count_Extra (Text)'Image
+            & "; a:" & ANSI.Tools.Count_Extra (Text)'Image
             & "; t:'" & Ada.Strings.UTF_Encoding.Wide_Wide_Strings.Encode
               (Text) & "'");
       end if;
@@ -269,12 +269,12 @@ package body AAA.Table_IO is
 
                Builder.Insert
                  (LML.Decode
-                    (Trim (AnsiAda.Scrub (LML.Encode (T.Headers (Col))))));
+                    (Trim (ANSI.Scrub (LML.Encode (T.Headers (Col))))));
                Builder.Append
                  (LML.Scalars.New_Text
                     (LML.Decode
                          (Trim
-                              (AnsiAda.Scrub
+                              (ANSI.Scrub
                                  (LML.Encode (T.Rows (Row) (Col)))))));
             end loop;
 

@@ -1,6 +1,6 @@
 with Ada.Strings.UTF_Encoding;
 
-package AAA.ANSI with Preelaborate is
+package AAA.ANSI.Tools with Preelaborate is
 
    package UTF renames Ada.Strings.UTF_Encoding;
 
@@ -15,4 +15,4 @@ package AAA.ANSI with Preelaborate is
    function Length (Text : UTF.UTF_String) return Natural;
    --  Same, but expects latin-1 or UTF-8 encoding
 
-end AAA.ANSI;
+end AAA.ANSI.Tools;

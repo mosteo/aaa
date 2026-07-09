@@ -20,12 +20,18 @@ directory = "../aaa_base/tests"
 
 [[test]]
 runner = "alire"
+directory = "../aaa_ansi/tests"
+
+[[test]]
+runner = "alire"
 directory = "../aaa_texts/tests"
 
 [[depends-on]]
 aaa_tests = "*"
+aaa_ansi_tests = "*"
 aaa_texts_tests = "*"
 
 [[pins]]
 aaa_tests = { path = "../aaa_base/tests" }
+aaa_ansi_tests = { path = "../aaa_ansi/tests" }
 aaa_texts_tests = { path = "../aaa_texts/tests" }
