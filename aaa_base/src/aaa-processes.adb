@@ -161,7 +161,8 @@ package body AAA.Processes is
      (Command_Line : Strings.Vector;
       Input        : String := "";
       Err_To_Out     : Boolean := False;
-      Raise_On_Error : Boolean := True)
+      Raise_On_Error : Boolean := True;
+      Success_Codes  : Integer_Array := (1 ..1 => 0))
       return Result
    is
 
@@ -181,7 +182,9 @@ package body AAA.Processes is
                  Subst => (1 => ASCII.LF)),
               Separator => ASCII.LF);
 
-         if R.Exit_Code /= 0 and then Raise_On_Error then
+         if (for all Code of Success_Codes => R.Exit_Code /= Code)
+            and then Raise_On_Error
+         then
             raise Child_Error with
               "child exited with code " & Strings.Trim (R.Exit_Code'Image);
          end if;

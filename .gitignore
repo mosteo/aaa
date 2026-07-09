@@ -8,3 +8,4 @@ alire.lock
 bin
 lib
 obj
+**/tests/config/
