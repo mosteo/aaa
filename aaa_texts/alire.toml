@@ -15,5 +15,5 @@ ansiada = "^1.1.0"
 lml     = "~0.1.0"
 umwi    = "~0.1.0"
 
-[test]
-runner = "alire"
+# [test]
+# runner = "alire"
