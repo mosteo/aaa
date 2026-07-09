@@ -16,6 +16,10 @@ lml     = "~0.2.0"
 umwi    = "~0.1.0"
 
 [[pins]]
+
+[pins.aaa]
+path = "../aaa_base"
+
 [pins.lml]
 url    = "https://github.com/mosteo/lml_ada.git"
 commit = "6e775b785f795af21bb6d8cb870b59f549dae159"
