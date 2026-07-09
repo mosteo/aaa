@@ -11,10 +11,13 @@ package AAA.Processes is
       Output    : Strings.Vector;
    end record;
 
+   type Integer_Array is array (Positive range <>) of Integer;
+
    function Run (Command_Line   : Strings.Vector;
                  Input          : String := "";
                  Err_To_Out     : Boolean := False;
-                 Raise_On_Error : Boolean := True)
+                 Raise_On_Error : Boolean := True;
+                 Success_Codes  : Integer_Array := (1 ..1 => 0))
                  return Result with
      Pre =>
        Input = "" or else
