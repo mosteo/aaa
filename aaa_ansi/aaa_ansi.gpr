@@ -1,24 +1,23 @@
-with "config/aaa_texts_config.gpr";
+with "config/aaa_ansi_config.gpr";
 with "aaa.gpr";
-with "aaa_ansi.gpr";
-with "lml.gpr";
-project Aaa_Texts is
+project Aaa_Ansi is
 
-   for Library_Name use "Aaa_Texts";
-   for Library_Version use Project'Library_Name & ".so." & Aaa_Texts_Config.Crate_Version;
+   for Library_Name use "Aaa_Ansi";
+   for Library_Version use
+     Project'Library_Name & ".so." & Aaa_Ansi_Config.Crate_Version;
 
    for Source_Dirs use ("src/", "config/");
-   for Object_Dir use "obj/" & Aaa_Texts_Config.Build_Profile;
+   for Object_Dir use "obj/" & Aaa_Ansi_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
    for Library_Dir use "lib";
 
    type Library_Type_Type is ("relocatable", "static", "static-pic");
    Library_Type : Library_Type_Type :=
-     external ("AAA_TEXTS_LIBRARY_TYPE", external ("LIBRARY_TYPE", "static"));
+     external ("AAA_ANSI_LIBRARY_TYPE", external ("LIBRARY_TYPE", "static"));
    for Library_Kind use Library_Type;
 
    package Compiler is
-      for Default_Switches ("Ada") use Aaa_Texts_Config.Ada_Compiler_Switches;
+      for Default_Switches ("Ada") use Aaa_Ansi_Config.Ada_Compiler_Switches;
    end Compiler;
 
    package Binder is
@@ -29,4 +28,4 @@ project Aaa_Texts is
       for Artifacts (".") use ("share");
    end Install;
 
-end Aaa_Texts;
+end Aaa_Ansi;

@@ -1,4 +1,4 @@
-with AAA.ANSI;
+with AAA.ANSI.Tools;
 with AAA.Debug;
 with AAA.Filesystem;
 
@@ -57,7 +57,7 @@ package body AAA.Text_IO is
          ----------
 
          function Used return Natural
-         is (ANSI.Length (To_String (Line)));
+         is (ANSI.Tools.Length (To_String (Line)));
 
          PPos : constant Integer := Pos;
          --  Initial Pos, to check we had some progress
@@ -78,7 +78,7 @@ package body AAA.Text_IO is
          end if;
 
          --  Eat words until line is complete
-         while Used + ANSI.Length (Next_Word) - 1 <= Line_Width loop
+         while Used + ANSI.Tools.Length (Next_Word) - 1 <= Line_Width loop
             Put (Next_Word);
             Pos := Pos + Next_Word'Length;
 

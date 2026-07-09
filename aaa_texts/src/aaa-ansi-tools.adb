@@ -3,7 +3,7 @@ with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
 
 with Umwi;
 
-package body AAA.ANSI is
+package body AAA.ANSI.Tools is
 
    package Chars renames Ada.Characters.Wide_Wide_Latin_1;
 
@@ -48,4 +48,4 @@ package body AAA.ANSI is
    function Length (Text : UTF.UTF_String) return Natural
    is (Length (UTF.Wide_Wide_Strings.Decode (Text)));
 
-end AAA.ANSI;
+end AAA.ANSI.Tools;

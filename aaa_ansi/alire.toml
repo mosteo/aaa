@@ -1,0 +1,19 @@
+name = "aaa_ansi"
+description = "ANSI escape sequences"
+version = "0.1.0-dev"
+
+authors = ["Alejandro R. Mosteo"]
+maintainers = ["Alejandro R. Mosteo <amosteo@unizar.es>"]
+maintainers-logins = ["mosteo"]
+licenses = "MIT"
+website = ""
+tags = ["ansi", "terminal", "escape"]
+
+[test]
+runner = "alire"
+
+[[depends-on]]
+aaa = "~0.3.0"
+
+[[pins]]
+aaa = { path = "../aaa_base" }
