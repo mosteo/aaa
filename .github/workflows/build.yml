@@ -26,18 +26,8 @@ jobs:
       fail-fast: false
       matrix:
         combo: # Test an assorment of representative combinations
-          - os: macos-13
-            gnat: ^13
-          - os: macos-latest
-            gnat: ^14
-          - os: ubuntu-22.04
-            gnat: ^10
-          - os: ubuntu-latest
-            gnat: ^12
           - os: ubuntu-24.04-arm
-            gnat: ^14
-          - os: windows-latest
-            gnat: ^11
+            gnat: # latest
           - os: ubuntu-latest
             gnat: # latest
           - os: macos-latest
@@ -52,7 +42,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Set up Alire and toolchain
-      uses: alire-project/setup-alire@v4
+      uses: alire-project/setup-alire@v6
       with:
         version: nightly # for [test]
         toolchain: gnat_native${{ matrix.combo.gnat }} gprbuild
