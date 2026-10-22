@@ -43,10 +43,13 @@ package AAA.Filesystem is
 
    function New_Name (In_Folder : String := ".") return Temp_File
      with Pre => In_Folder /= "";
-   --  This finds a new random name; it does not create anything.
+   --  This finds a new random name; it does not create anything. The name is
+   --  unique among those given by this process and not already on disk, and
+   --  includes the process id to avoid clashes with other processes. In_Folder
+   --  is resolved to an absolute path at this point.
 
    function Filename (This : Temp_File) return String;
-   --  The filename is a random sequence of 8 characters + ".tmp"
+   --  The filename is "aaa-<pid>-" + a random sequence of 4 letters + ".tmp"
 
    procedure Keep (This : in out Temp_File);
    --  If Keep is called, the file/dir will not be erased on finalization. This

@@ -3,9 +3,14 @@ with AAA.Processes;
 with AAA.Strings;
 
 with Ada.Numerics.Discrete_Random;
+with Ada.Real_Time;
+with Ada.Unchecked_Conversion;
 with Ada.Unchecked_Deallocation;
 
 with GNAT.OS_Lib;
+with GNAT.String_Hash;
+
+with Interfaces;
 
 package body AAA.Filesystem is
 
@@ -201,29 +206,131 @@ package body AAA.Filesystem is
               Go_Down'Access);
    end Traverse_Tree;
 
+   ----------------------
+   -- Tempfile_Support --
+   ----------------------
+
+   Epoch : constant Ada.Real_Time.Time :=
+             Ada.Real_Time.Time_Of (0, Ada.Real_Time.To_Time_Span (0.0));
+
+   protected Tempfile_Support is
+      procedure Next_Name (Name : in out String) with
+        Pre => (for all Char of Name => Char = '?');
+      --  Replaces '?'s with random letters, never repeating a name already
+      --  given by this process.
+   private
+      Next_Seed  : Interfaces.Unsigned_32 := 0;
+      Used_Names : AAA.Strings.Set;
+   end Tempfile_Support;
+
+   protected body Tempfile_Support is
+
+      ---------------
+      -- Next_Name --
+      ---------------
+
+      procedure Next_Name (Name : in out String) is
+         subtype Valid_Character is Character range 'a' .. 'z';
+         package Char_Random is new
+           Ada.Numerics.Discrete_Random (Valid_Character);
+         Gen : Char_Random.Generator;
+
+         --  The granularity of the default random seed is implementation
+         --  defined (as coarse as 1 second in some cases), so two names
+         --  requested close in time could clash. Instead, the seed hashes
+         --  the time in nanoseconds, the current directory, and a counter
+         --  that changes with every call in this process.
+
+         use Ada.Real_Time;
+         use type Interfaces.Unsigned_32;
+
+         Nano : constant String :=
+                  AAA.Strings.Replace (To_Duration (Clock - Epoch)'Image,
+                                       ".", "");
+         --  This gives us an image without loss of precision and without
+         --  having to be worried about overflows
+
+         type Hash_Type is mod 2 ** 32;
+         pragma Compile_Time_Error (Hash_Type'Size > Integer'Size,
+                                    "Hash_Type is too large");
+
+         function Hash is new GNAT.String_Hash.Hash
+           (Char_Type => Character,
+            Key_Type  => String,
+            Hash_Type => Hash_Type);
+
+         function To_Integer is
+           new Ada.Unchecked_Conversion (Hash_Type, Integer);
+         --  Ensure unsigned -> signed conversion doesn't bite us
+
+         Seed : constant Hash_Type :=
+                  Hash (Nano & " at " & Ada.Directories.Current_Directory
+                        & "#" & Next_Seed'Image);
+      begin
+         Next_Seed := Next_Seed + 1;
+
+         Char_Random.Reset (Gen, To_Integer (Seed));
+
+         loop
+            for I in Name'Range loop
+               Name (I) := Char_Random.Random (Gen);
+            end loop;
+
+            --  Make totally sure that not even by random chance we are reusing
+            --  a temporary name.
+
+            exit when not Used_Names.Contains (Name);
+         end loop;
+
+         Used_Names.Insert (Name);
+      end Next_Name;
+
+   end Tempfile_Support;
+
    --------------
    -- New_Name --
    --------------
 
    function New_Name (In_Folder : String := ".") return Temp_File
    is
-      subtype Valid_Character is Character range 'a' .. 'z';
-      package Char_Random is new
-        Ada.Numerics.Discrete_Random (Valid_Character);
-      Gen : Char_Random.Generator;
+      Folder : constant String := Ada.Directories.Full_Name (In_Folder);
+      --  Resolved now, so a later change of the current directory does not
+      --  make this temporary point elsewhere.
+
+      ----------------
+      -- Fresh_Name --
+      ----------------
+
+      function Fresh_Name return String is
+         Result : String :=
+                    "aaa-"
+                    & AAA.Strings.Trim
+                      (GNAT.OS_Lib.Pid_To_Integer
+                         (GNAT.OS_Lib.Current_Process_Id)'Image)
+                    & "-????.tmp";
+      begin
+         Tempfile_Support.Next_Name (Result (Result'Last - 7 ..
+                                             Result'Last - 4));
+
+         --  Do not reuse a name already on disk (e.g. a leftover from a
+         --  previous process with the same pid).
+
+         if Ada.Directories.Exists (Ada.Directories.Compose (Folder, Result))
+         then
+            return Fresh_Name;
+         end if;
+
+         return Result;
+      end Fresh_Name;
+
+      Name : constant String := Fresh_Name;
    begin
-      return Result : Temp_File := (Ada.Finalization.Limited_Controlled with
-                                    Name_Len   => 12,
-                                    Folder_Len => In_Folder'Length,
-                                    Keep       => <>,
-                                    Name       => "aaa-XXXX.tmp",
-                                    Folder     => In_Folder)
-      do
-         Char_Random.Reset (Gen);
-         for I in 5 .. 8 loop
-            Result.Name (I) := Char_Random.Random (Gen);
-         end loop;
-      end return;
+      return (Ada.Finalization.Limited_Controlled with
+              Name_Len   => Name'Length,
+              Folder_Len => Folder'Length,
+              Keep       => <>,
+              Name       => Name,
+              Folder     => Folder);
    end New_Name;
 
    --------------
