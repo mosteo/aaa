@@ -30,7 +30,10 @@ jobs:
             gnat: # latest
           - os: ubuntu-latest
             gnat: # latest
-          - os: macos-latest
+          - os: macos-15 # Not macos-latest (macos-26): since runner image
+                         # 20261013, its SDK's libSystem.tbd lists arm64e.x1,
+                         # which the GNAT linker rejects ("unknown
+                         # architecture"). Restore once a fixed GNAT is out.
             gnat: # latest
           - os: windows-latest
             gnat: # latest
