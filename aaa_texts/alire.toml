@@ -13,7 +13,7 @@ tags = ["unicode", "ansi", "console", "terminal", "tables"]
 [[depends-on]]
 aaa      = "~0.3.0"
 aaa_ansi = "~0.1.0"
-lml      = "~0.5"
+lml      = "~0.5.0"
 umwi     = "~0.1.0"
 
 [[pins]]
