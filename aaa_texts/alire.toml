@@ -26,7 +26,7 @@ path = "../aaa_ansi"
 
 [pins.lml]
 url    = "https://github.com/mosteo/lml_ada.git"
-commit = "1c4e2235339e2c71d87aa6bcb1c32e2014306d87"
+commit = "ef1d42862fc81877aff35dba27aa5ca712e60cb6"
 
 [test]
 runner = "alire"
