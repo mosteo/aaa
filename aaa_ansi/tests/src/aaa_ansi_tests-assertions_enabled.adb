@@ -1,3 +1,4 @@
+pragma Alire_Test;
 procedure Aaa_Ansi_Tests.Assertions_Enabled is
 begin
    begin

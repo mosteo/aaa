@@ -1,3 +1,4 @@
+pragma Alire_Test;
 with Ada.Assertions;
 
 procedure Dev_Tests.Example_Test is
