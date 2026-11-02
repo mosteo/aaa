@@ -1,3 +1,5 @@
+with AAA.Strings;
+
 with Ada.Directories;
 private with Ada.Finalization;
 
@@ -31,6 +33,16 @@ package AAA.Filesystem is
    procedure Remove_Folder_If_Empty (Path : String);
    --  Attempt to remove a folder, but do not complain if unable (because not
    --  empty or not existing).
+
+   function Read_Lines (Path : String) return Strings.Vector;
+   --  Read a text file into memory. Lines have the same bytes as in the file,
+   --  whatever its encoding, without line terminators. Raises
+   --  Ada.IO_Exceptions.Name_Error if the file can't be opened.
+
+   procedure Write_Lines (Path : String; Lines : Strings.Vector);
+   --  Create or overwrite a text file, with lines having the given bytes and
+   --  the line terminators of the platform. Raises Ada.IO_Exceptions.Use_Error
+   --  if the file can't be created, and Device_Error if it can't be written.
 
    --  TEMP_FILE: obtain a temporary name with optional cleanup
 

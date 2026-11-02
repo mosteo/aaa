@@ -18,6 +18,7 @@ project Aaa_Texts is
    for Library_Kind use Library_Type;
 
    package Compiler is
+      for Local_Configuration_Pragmas use "gnat.adc";
       for Default_Switches ("Ada") use Aaa_Texts_Config.Ada_Compiler_Switches;
    end Compiler;
 

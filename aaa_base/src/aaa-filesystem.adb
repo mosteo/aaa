@@ -1,7 +1,7 @@
 with AAA.Debug;
 with AAA.Processes;
-with AAA.Strings;
 
+with Ada.IO_Exceptions;
 with Ada.Numerics.Discrete_Random;
 with Ada.Real_Time;
 with Ada.Unchecked_Conversion;
@@ -170,6 +170,84 @@ package body AAA.Filesystem is
       when Name_Error | Use_Error =>
          null;
    end Remove_Folder_If_Empty;
+
+   ----------------
+   -- Read_Lines --
+   ----------------
+
+   function Read_Lines (Path : String) return Strings.Vector is
+      use GNAT.OS_Lib;
+
+      File : constant File_Descriptor := Open_Read (Path, Text);
+   begin
+      if File = Invalid_FD then
+         raise Ada.IO_Exceptions.Name_Error with "Cannot open file: " & Path;
+      end if;
+
+      declare
+         Contents : String_Access :=
+                      new String (1 .. Natural (File_Length (File)));
+         --  In the heap as it can be large, e.g., the output of a process
+
+         Last  : Natural := 0;
+         Count : Integer;
+      begin
+         --  Reading can take several calls and return less than the file
+         --  length, as on Windows line terminators are converted.
+
+         while Last < Contents'Last loop
+            Count := Read (File,
+                           Contents (Last + 1)'Address,
+                           Contents'Last - Last);
+            exit when Count <= 0;
+            Last := Last + Count;
+         end loop;
+
+         Close (File);
+
+         return Lines : Strings.Vector :=
+           Strings.Split (Contents (1 .. Last), ASCII.LF)
+         do
+            --  The last terminator ends a line and doesn't start another one
+
+            if Last > 0 and then Contents (Last) = ASCII.LF then
+               Lines.Delete_Last;
+            end if;
+
+            Free (Contents);
+         end return;
+      end;
+   end Read_Lines;
+
+   -----------------
+   -- Write_Lines --
+   -----------------
+
+   procedure Write_Lines (Path : String; Lines : Strings.Vector) is
+      use GNAT.OS_Lib;
+
+      File : constant File_Descriptor := Create_File (Path, Text);
+   begin
+      if File = Invalid_FD then
+         raise Ada.IO_Exceptions.Use_Error with "Cannot create file: " & Path;
+      end if;
+
+      for Line of Lines loop
+         declare
+            Terminated : constant String := Line & ASCII.LF;
+         begin
+            if Write (File, Terminated'Address, Terminated'Length)
+              /= Terminated'Length
+            then
+               Close (File);
+               raise Ada.IO_Exceptions.Device_Error
+                 with "Cannot write to file: " & Path;
+            end if;
+         end;
+      end loop;
+
+      Close (File);
+   end Write_Lines;
 
    -------------------
    -- Traverse_Tree --

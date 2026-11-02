@@ -1,4 +1,6 @@
-with Ada.Text_IO; use Ada.Text_IO;
+with AAA.Console_IO;
+with AAA.Filesystem;
+
 with GNAT.Expect;
 
 package body AAA.Processes is
@@ -40,8 +42,6 @@ package body AAA.Processes is
 
       Arg_List : aliased constant Argument_List := To_List (Arguments);
 
-      Outfile : File_Type;
-
       Exit_Code : Integer;
 
       -------------
@@ -53,24 +53,11 @@ package body AAA.Processes is
       begin
          Delete_File (Name.all, Ok);
          if not Ok then
-            Put_Line ("Failed to delete tmp file: " & Name.all);
+            Console_IO.Put_Line ("Failed to delete tmp file: " & Name.all);
          end if;
 
          Free (Name);
       end Cleanup;
-
-      -----------------
-      -- Read_Output --
-      -----------------
-
-      procedure Read_Output is
-      begin
-         Open (Outfile, In_File, Name.all);
-         while not End_Of_File (Outfile) loop
-            Output.Append (Get_Line (Outfile));
-         end loop;
-         Close (Outfile);
-      end Read_Output;
 
    begin
       Create_Temp_Output_File (File, Name);
@@ -102,7 +89,7 @@ package body AAA.Processes is
       end;
 
       Close (File); -- Can't raise
-      Read_Output;
+      Output.Append (Filesystem.Read_Lines (Name.all));
 
       Cleanup;
       return Exit_Code;
