@@ -442,11 +442,33 @@ package body AAA.Filesystem is
    -------------
 
    procedure Replace (This : in out Replacer) is
+      Target : constant String :=
+                 GNAT.OS_Lib.Normalize_Pathname (This.Original);
+      --  In case the original is a symbolic link, which must remain as such
+
+      Ignored, Renamed : Boolean;
    begin
       if This.Backup then
          Backup_If_Existing (This.Original, This.Backup_Dir);
       end if;
-      Ada.Directories.Copy_File (This.Editable_Name, This.Original);
+
+      if Is_File (Target) then
+         GNAT.OS_Lib.Copy_File_Attributes (Target,
+                                           This.Editable_Name,
+                                           Ignored,
+                                           Copy_Timestamp => False);
+      end if;
+
+      --  On Unix this replaces the file atomically, so no other process can
+      --  find it incomplete. It fails on Windows if the file exists, and
+      --  across filesystems. Then we can only copy, as deleting the file first
+      --  would fail if it's open, and leave a moment with no file at all.
+
+      GNAT.OS_Lib.Rename_File (This.Editable_Name, Target, Renamed);
+
+      if not Renamed then
+         Ada.Directories.Copy_File (This.Editable_Name, This.Original);
+      end if;
 
       --  The temporary copy will be cleaned up by This.Temp_Copy finalization
    end Replace;
