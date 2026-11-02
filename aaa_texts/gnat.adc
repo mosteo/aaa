@@ -1,0 +1,4 @@
+pragma Restrictions (No_Dependence => Ada.Text_IO);
+--  Its output can garble UTF-8 text, see AAA.Console_IO for details and what to
+--  use instead. This file is only for the library: in a main program, the binder
+--  checks the restriction in all the units of the program, dependencies included.

@@ -1,4 +1,5 @@
 with AAA.ANSI.Tools;
+with AAA.Console_IO;
 with AAA.Debug;
 with AAA.Filesystem;
 
@@ -14,12 +15,9 @@ package body AAA.Text_IO is
    procedure Put_Paragraph (Text        : String;
                             Line_Width  : Line_Widths := Default_Line_Width;
                             Line_Prefix : String := "";
-                            Filling     : Filling_Modes := Greedy;
-                            File        : Ada.Text_IO.File_Access :=
-                              Ada.Text_IO.Standard_Output)
+                            Filling     : Filling_Modes := Greedy)
    is
       pragma Unreferenced (Filling);
-      use Ada.Text_IO;
 
       Pos : Integer := Text'First;
 
@@ -104,8 +102,8 @@ package body AAA.Text_IO is
             end;
          end if;
 
-         --  Final dump to file
-         Put_Line (File.all, To_String (Line));
+         --  Final dump to output
+         Console_IO.Put_Line (To_String (Line));
 
          --  Eat spaces that would start the next line:
          while Pos <= Text'Last and then Text (Pos) = ' ' loop
@@ -116,7 +114,7 @@ package body AAA.Text_IO is
    begin
       --  Trivial case of empty line:
       if Text = "" then
-         New_Line (File.all);
+         Console_IO.New_Line;
       else
          --  Regular case:
          while Pos <= Text'Last loop
@@ -132,13 +130,11 @@ package body AAA.Text_IO is
    procedure Put_Paragraphs (Text        : Strings.Vector;
                              Line_Width  : Line_Widths := Default_Line_Width;
                              Line_Prefix : String := "";
-                             Filling     : Filling_Modes := Greedy;
-                             File        : Ada.Text_IO.File_Access :=
-                               Ada.Text_IO.Standard_Output)
+                             Filling     : Filling_Modes := Greedy)
    is
    begin
       for Line of Text loop
-         Put_Paragraph (Line, Line_Width, Line_Prefix, Filling, File);
+         Put_Paragraph (Line, Line_Width, Line_Prefix, Filling);
       end loop;
    end Put_Paragraphs;
 
@@ -162,10 +158,7 @@ package body AAA.Text_IO is
 
    overriding
    procedure Finalize (This : in out File) is
-      use Ada.Text_IO;
       use type Strings.Vector;
-
-      File : File_Type;
    begin
       if This.Lines = This.Orig then
          return;
@@ -177,11 +170,7 @@ package body AAA.Text_IO is
                                                   This.Backup,
                                                   This.Backup_Dir);
       begin
-         Open (File, Out_File, Replacer.Editable_Name);
-         for Line of This.Lines loop
-            Put_Line (File, Line);
-         end loop;
-         Close (File);
+         Filesystem.Write_Lines (Replacer.Editable_Name, This.Lines);
          Replacer.Replace;
       end;
    exception
@@ -205,9 +194,6 @@ package body AAA.Text_IO is
                   Backup_Dir : String := "")
                   return File
    is
-      use Ada.Text_IO;
-      F : File_Type;
-
       Backup_To : constant String :=
                     (if Backup_Dir /= ""
                      then Backup_Dir
@@ -222,12 +208,7 @@ package body AAA.Text_IO is
                              Lines      => <>,
                              Orig       => <>)
       do
-         Open (F, In_File, From);
-         while not End_Of_File (F) loop
-            This.Orig.Append (Get_Line (F));
-         end loop;
-         Close (F);
-
+         This.Orig  := Filesystem.Read_Lines (From);
          This.Lines := This.Orig;
       end return;
    end Load;

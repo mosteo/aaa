@@ -1,5 +1,4 @@
 private with Ada.Finalization;
-with Ada.Text_IO;
 
 with AAA.Strings;
 
@@ -21,10 +20,8 @@ package AAA.Text_IO is
    procedure Put_Paragraph (Text        : String;
                             Line_Width  : Line_Widths := Default_Line_Width;
                             Line_Prefix : String := "";
-                            Filling     : Filling_Modes := Greedy;
-                            File        : Ada.Text_IO.File_Access :=
-                              Ada.Text_IO.Standard_Output);
-   --  Reformat Text and write it to the given File.
+                            Filling     : Filling_Modes := Greedy);
+   --  Reformat Text and write it to standard output, as AAA.Console_IO does.
    --  Lines will be broken at either spaces or '-'.
    --  If Line_Width is too short for a word or syllable, the word will be
    --  mercilessly broken wherever the line is completed.
@@ -35,9 +32,7 @@ package AAA.Text_IO is
    procedure Put_Paragraphs (Text        : Strings.Vector;
                              Line_Width  : Line_Widths := Default_Line_Width;
                              Line_Prefix : String := "";
-                             Filling     : Filling_Modes := Greedy;
-                             File        : Ada.Text_IO.File_Access :=
-                               Ada.Text_IO.Standard_Output);
+                             Filling     : Filling_Modes := Greedy);
    --  Call Put_Paragraph on every line of Text
 
    --  A convenience type to hold a complete text file in memory as a vector of

@@ -93,6 +93,23 @@ begin
               "stderr unexpectedly captured: " & R.Output.Flatten);
    end;
 
+   if not On_Windows then
+
+      --  Output is captured as the bytes it is made of, including those not
+      --  in UTF-8, with or without a last terminator
+
+      declare
+         Latin_1 : constant String := "caf" & Character'Val (16#E9#);
+         R       : constant Proc.Result :=
+                     Proc.Run (Shell ("printf 'caf\351\nend'"));
+      begin
+         Assert (Natural (R.Output.Length) = 2,
+                 "unexpected lines: " & R.Output.Flatten ("|"));
+         Assert (R.Output.First_Element = Latin_1, "bytes not kept");
+         Assert (R.Output.Last_Element = "end", "last line lost");
+      end;
+   end if;
+
    --  The following uses of Input are unsupported on Windows (see spec)
 
    if not On_Windows then
