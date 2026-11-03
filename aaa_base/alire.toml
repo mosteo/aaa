@@ -1,6 +1,7 @@
 name = "aaa"
-version = "0.3.1-dev"
 description = "Alex's Ada Assortment (of miscellaneous utilities)"
+version = "0.3.2-dev"
+# 0.3.2: file-based locking
 
 long-description = """
 Alex's Ada Assortment of Utilities
@@ -12,6 +13,7 @@ Alex's Ada Assortment of Utilities
 - String containers and utilities.
 - Simple subprocess spawning.
 - Write-through minimal cache for objects stored in files
+- Advisory file locks that the OS releases when a process ends.
 """
 
 authors = ["Alejandro R. Mosteo"]
