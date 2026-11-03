@@ -8,7 +8,7 @@ package AAA.Debug with Preelaborate is
    procedure Put_Exception (E           : Ada.Exceptions.Exception_Occurrence;
                             Title       : String := "AAA EXCEPTION DUMP:";
                             Stack_Trace : Boolean := True);
-   --  Print Image and optionally Stack_Trace
+   --  Print Image and optionally Stack_Trace to standard error
 
    function Stack_Trace return String;
    --  Return a string containing the call stack. To keep things Preelaborable,

@@ -1,7 +1,8 @@
 name = "aaa_texts"
 description = "Utilities to deal with enriched human texts (ANSI, Unicode)"
-version = "0.4.1-dev"
-# 0.4.1: Removal of Text_IO
+version = "0.4.2-dev"
+# 0.4.2: Manual save for text files to allow error handling
+# 0.4.1: Removal of Ada.Text_IO
 # 0.4.0: Renamed AAA.ANSI to AAA.ANSI.Tools
 
 authors = ["Alejandro R. Mosteo"]

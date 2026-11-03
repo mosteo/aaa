@@ -27,10 +27,11 @@ package body AAA.Debug is
    is
       use GNAT.IO;
    begin
-      Put_Line (Title & ASCII.LF
+      Put_Line (Standard_Error,
+                Title & ASCII.LF
                 & Image (E));
       if Stack_Trace then
-         Put_Line (Debug.Stack_Trace);
+         Put_Line (Standard_Error, Debug.Stack_Trace);
       end if;
    end Put_Exception;
 

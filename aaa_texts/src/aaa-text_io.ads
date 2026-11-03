@@ -37,7 +37,8 @@ package AAA.Text_IO is
 
    --  A convenience type to hold a complete text file in memory as a vector of
    --  lines. On destruction, changes to the contents are written back to disk.
-   --  A backup ".prev" file is also created by default.
+   --  A backup ".prev" file is also created by default. A failure at that point
+   --  can only be printed to standard error, so use Save manually for handling.
 
    type File (<>) is tagged limited private;
 
@@ -52,6 +53,10 @@ package AAA.Text_IO is
 
    function Lines (This : aliased in out File)
                    return access Strings.Vector;
+
+   procedure Save (This : in out File);
+   --  Write changes to disk now, if any, propagating any failure. After a
+   --  failure, nothing else is attempted on destruction.
 
    procedure Append_Lines (File       : String;
                            Lines      : Strings.Vector;
@@ -70,6 +75,7 @@ private
       Orig       : Strings.Vector;         -- The original contents
       Backup     : Boolean := True;
       Backup_Dir : String (1 .. Backup_Len);
+      Failed     : Boolean := False;       -- Save already raised
    end record;
 
    overriding procedure Finalize (This : in out File);
