@@ -4,6 +4,7 @@ with System;
 
 separate (AAA.Filesystem.Locks)
 function Lock_File (File : OS.File_Descriptor;
+                    Kind : Kinds;
                     Wait : Boolean)
                     return Outcomes
 is
@@ -11,6 +12,7 @@ is
 
    --  Same values on Linux, macOS and the BSDs
 
+   LOCK_SH : constant := 1;
    LOCK_EX : constant := 2;
    LOCK_NB : constant := 4;
    EINTR   : constant := 4;
@@ -53,7 +55,10 @@ begin
 
    loop
       if Flock (int (File),
-                LOCK_EX + (if Wait then 0 else LOCK_NB)) = 0
+                (case Kind is
+                    when Exclusive => LOCK_EX,
+                    when Shared    => LOCK_SH)
+                + (if Wait then 0 else LOCK_NB)) = 0
       then
          return Locked;
       end if;

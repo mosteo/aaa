@@ -9,10 +9,11 @@ package body AAA.Filesystem.Locks is
    type Outcomes is (Locked, Busy, Unsupported);
 
    function Lock_File (File : OS.File_Descriptor;
+                       Kind : Kinds;
                        Wait : Boolean)
                        return Outcomes is separate;
-   --  Lock File exclusively with the OS facility, which differs between Unix
-   --  and Windows. Without Wait, returns Busy at once if already locked.
+   --  Lock File with the OS facility, which differs between Unix and Windows.
+   --  Without Wait, returns Busy at once if locked in a conflicting way.
 
    ----------
    -- Open --
@@ -32,6 +33,11 @@ package body AAA.Filesystem.Locks is
          This.File := OS.Open_Read_Write (Path, OS.Binary);
       end if;
 
+      --  Locking doesn't need write access, which we may lack
+      if This.File = OS.Invalid_FD then
+         This.File := OS.Open_Read (Path, OS.Binary);
+      end if;
+
       if This.File = OS.Invalid_FD then
          raise Ada.IO_Exceptions.Use_Error with
            "Cannot open lock file " & Path & ": " & OS.Errno_Message;
@@ -46,13 +52,14 @@ package body AAA.Filesystem.Locks is
 
    function Lock_Using (This : in out Lock;
                         Path : String;
+                        Kind : Kinds;
                         Wait : Boolean)
                         return Boolean
    is
    begin
       Open (This, Path);
 
-      case Lock_File (This.File, Wait) is
+      case Lock_File (This.File, Kind, Wait) is
          when Locked | Unsupported =>
             return True;
          when Busy =>
@@ -65,16 +72,21 @@ package body AAA.Filesystem.Locks is
    -- Try_Acquire --
    -----------------
 
-   function Try_Acquire (This : in out Lock; Path : String) return Boolean
-   is (Lock_Using (This, Path, Wait => False));
+   function Try_Acquire (This : in out Lock;
+                         Path : String;
+                         Kind : Kinds := Exclusive)
+                         return Boolean
+   is (Lock_Using (This, Path, Kind, Wait => False));
 
    -------------
    -- Acquire --
    -------------
 
-   procedure Acquire (This : in out Lock; Path : String) is
+   procedure Acquire (This : in out Lock;
+                      Path : String;
+                      Kind : Kinds := Exclusive) is
    begin
-      if not Lock_Using (This, Path, Wait => True) then
+      if not Lock_Using (This, Path, Kind, Wait => True) then
          raise Program_Error with "Lock reported as busy after waiting";
       end if;
    end Acquire;

@@ -1,6 +1,7 @@
 name = "aaa"
 description = "Alex's Ada Assortment (of miscellaneous utilities)"
-version = "0.3.2-dev"
+version = "0.3.3-dev"
+# 0.3.3: shared file locks
 # 0.3.2: file-based locking
 
 long-description = """
