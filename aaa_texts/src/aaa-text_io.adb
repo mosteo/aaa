@@ -150,6 +150,7 @@ package body AAA.Text_IO is
       F : AAA.Text_IO.File := Load (File, Backup, Backup_Dir);
    begin
       F.Lines.Append (Lines);
+      F.Save;
    end Append_Lines;
 
    --------------
@@ -158,21 +159,10 @@ package body AAA.Text_IO is
 
    overriding
    procedure Finalize (This : in out File) is
-      use type Strings.Vector;
    begin
-      if This.Lines = This.Orig then
-         return;
+      if not This.Failed then
+         This.Save;
       end if;
-
-      declare
-         Replacer : Filesystem.Replacer :=
-                      Filesystem.New_Replacement (This.Name,
-                                                  This.Backup,
-                                                  This.Backup_Dir);
-      begin
-         Filesystem.Write_Lines (Replacer.Editable_Name, This.Lines);
-         Replacer.Replace;
-      end;
    exception
       when E : others =>
          Debug.Put_Exception (E);
@@ -206,11 +196,42 @@ package body AAA.Text_IO is
                              Backup     => Backup,
                              Backup_Dir => Backup_To,
                              Lines      => <>,
-                             Orig       => <>)
+                             Orig       => <>,
+                             Failed     => False)
       do
          This.Orig  := Filesystem.Read_Lines (From);
          This.Lines := This.Orig;
       end return;
    end Load;
+
+   ----------
+   -- Save --
+   ----------
+
+   procedure Save (This : in out File) is
+      use type Strings.Vector;
+   begin
+      This.Failed := False;
+
+      if This.Lines = This.Orig then
+         return;
+      end if;
+
+      declare
+         Replacer : Filesystem.Replacer :=
+                      Filesystem.New_Replacement (This.Name,
+                                                  This.Backup,
+                                                  This.Backup_Dir);
+      begin
+         Filesystem.Write_Lines (Replacer.Editable_Name, This.Lines);
+         Replacer.Replace;
+      end;
+
+      This.Orig := This.Lines;
+   exception
+      when others =>
+         This.Failed := True;
+         raise;
+   end Save;
 
 end AAA.Text_IO;
