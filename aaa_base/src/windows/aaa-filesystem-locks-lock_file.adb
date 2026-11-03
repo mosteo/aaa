@@ -4,6 +4,7 @@ with System;
 
 separate (AAA.Filesystem.Locks)
 function Lock_File (File : OS.File_Descriptor;
+                    Kind : Kinds;
                     Wait : Boolean)
                     return Outcomes
 is
@@ -47,7 +48,9 @@ begin
 
    if Lock_File_Ex
      (Get_OS_Handle (int (File)),
-      Flags       => LOCKFILE_EXCLUSIVE_LOCK
+      Flags       => (case Kind is
+                         when Exclusive => LOCKFILE_EXCLUSIVE_LOCK,
+                         when Shared    => 0)
                        + (if Wait then 0 else LOCKFILE_FAIL_IMMEDIATELY),
       Reserved    => 0,
       Length_Low  => 1,
