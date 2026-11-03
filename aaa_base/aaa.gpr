@@ -5,7 +5,19 @@ project Aaa is
    for Library_Name use "aaa";
    for Library_Version use Project'Library_Name & ".so." & Aaa_Config.Crate_Version;
 
-   for Source_Dirs use ("src/");
+   --  OS-specific sources, autodetected from environment
+
+   OS_Sources := ();
+   Detect_Windows := external ("SystemRoot", "not_windows");
+
+   case Detect_Windows is
+      when "not_windows" =>
+         OS_Sources := OS_Sources & ("src/unix/");
+      when others =>
+         OS_Sources := OS_Sources & ("src/windows/");
+   end case;
+
+   for Source_Dirs use ("src/") & OS_Sources;
    for Object_Dir use "obj/" & Aaa_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
    for Library_Dir use "lib";
