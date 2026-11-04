@@ -39,6 +39,17 @@ package AAA.Console_IO is
    --  This is meant for terminals; on a pipe it waits for the end of input.
 
    function Is_UTF_8 (Text : String) return Boolean;
-   --  Say if Text is valid UTF-8
+   --  Say if Text is valid UTF-8, as per UTF_8_Sequence_Length
+
+   function UTF_8_Sequence_Length (Text  : String;
+                                   First : Positive)
+                                   return Natural
+     with Pre => First in Text'Range;
+   --  Length (1 .. 4) of the well-formed UTF-8 sequence that starts at
+   --  Text (First), or 0 if there is none. Well-formed is as in the Unicode
+   --  Standard (table 3-7), which also rejects overlong forms, surrogates and
+   --  code points beyond U+10FFFF (unlike Ada.Strings.UTF_Encoding in GNAT).
+   --
+   --  Note that this part of Unicode spec is fixed; no maintenance needed.
 
 end AAA.Console_IO;
